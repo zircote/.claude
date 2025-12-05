@@ -1,0 +1,30 @@
+[project]
+name = "datadog-entity-generator"
+version = "1.0.0"
+description = "Generate Datadog Software Catalog entity YAML files"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0",
+    "datadog-api-client>=2.0",
+    "jsonschema>=4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1",
+    "mypy>=1.0",
+    "pytest>=7.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]  # Allow long lines for readable error messages
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_ignores = true

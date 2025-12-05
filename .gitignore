@@ -1,0 +1,101 @@
+# Claude Code Configuration .gitignore
+# Track: agents, commands, skills, includes, docs, CLAUDE.md
+# Ignore: ephemeral data, sessions, caches, local overrides
+
+# ===========================================
+# OS & Editor Files
+# ===========================================
+.DS_Store
+*.DS_Store
+**/.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ===========================================
+# Session & History Data (ephemeral)
+# ===========================================
+history.jsonl
+file-history/
+session-env/
+shell-snapshots/
+todos/
+plans/
+debug/
+
+# ===========================================
+# Local/Machine-Specific Config
+# ===========================================
+settings.local.json
+.env
+.env.local
+*.local.json
+
+# ===========================================
+# IDE & Tool Integration
+# ===========================================
+ide/
+.windsurf/
+.vscode/
+.idea/
+
+# ===========================================
+# Plugins (reinstallable from marketplace)
+# ===========================================
+plugins/
+
+# ===========================================
+# Project-Specific Data
+# ===========================================
+projects/
+
+# ===========================================
+# Analytics & Feature Flags
+# ===========================================
+statsig/
+
+# ===========================================
+# Nested Config & Caches
+# ===========================================
+.claude/
+
+# ===========================================
+# Database & Binary Files
+# ===========================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ===========================================
+# Skills Data (browser state, caches)
+# ===========================================
+skills/*/data/
+skills/**/browser_state/
+skills/**/cache/
+skills/**/*.log
+
+# ===========================================
+# Temporary Files
+# ===========================================
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ===========================================
+# KEEP THESE (explicit inclusions via negation)
+# ===========================================
+# Note: Git tracks by default, these are just for clarity
+# !agents/
+# !commands/
+# !skills/*.md
+# !skills/*/skill.md
+# !includes/
+# !docs/
+# !CLAUDE.md
+# !settings.json
+# !.env.example
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.windsurf/rules/snyk_rules.md

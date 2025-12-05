@@ -1,0 +1,202 @@
+{
+  "patterns": [
+    {
+      "name": "datetime_utcnow",
+      "category": "datetime",
+      "deprecated": "datetime.utcnow()",
+      "replacement": "datetime.now(UTC)",
+      "regex": "datetime\\.utcnow\\(\\)",
+      "replacement_template": "datetime.now(UTC)",
+      "required_imports": ["from datetime import UTC"],
+      "python_version": "3.12+",
+      "description": "datetime.utcnow() is deprecated in favor of timezone-aware datetime.now(UTC)"
+    },
+    {
+      "name": "datetime_utcnow_factory",
+      "category": "datetime",
+      "deprecated": "default_factory=datetime.utcnow",
+      "replacement": "default_factory=lambda: datetime.now(UTC)",
+      "regex": "default_factory\\s*=\\s*datetime\\.utcnow(?!\\()",
+      "replacement_template": "default_factory=lambda: datetime.now(UTC)",
+      "required_imports": ["from datetime import UTC"],
+      "python_version": "3.12+",
+      "description": "Pydantic Field default_factory should use timezone-aware datetime"
+    },
+    {
+      "name": "datetime_utcfromtimestamp",
+      "category": "datetime",
+      "deprecated": "datetime.utcfromtimestamp()",
+      "replacement": "datetime.fromtimestamp(*, UTC)",
+      "regex": "datetime\\.utcfromtimestamp\\(([^)]+)\\)",
+      "replacement_template": "datetime.fromtimestamp(\\1, UTC)",
+      "required_imports": ["from datetime import UTC"],
+      "python_version": "3.12+",
+      "description": "datetime.utcfromtimestamp() is deprecated in favor of datetime.fromtimestamp(*, UTC)"
+    },
+    {
+      "name": "collections_mapping",
+      "category": "collections",
+      "deprecated": "collections.Mapping",
+      "replacement": "collections.abc.Mapping",
+      "regex": "from collections import (.*\\b)Mapping(\\b.*)",
+      "replacement_template": "from collections.abc import \\1Mapping\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.Mapping moved to collections.abc.Mapping"
+    },
+    {
+      "name": "collections_mutablemapping",
+      "category": "collections",
+      "deprecated": "collections.MutableMapping",
+      "replacement": "collections.abc.MutableMapping",
+      "regex": "from collections import (.*\\b)MutableMapping(\\b.*)",
+      "replacement_template": "from collections.abc import \\1MutableMapping\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.MutableMapping moved to collections.abc.MutableMapping"
+    },
+    {
+      "name": "collections_sequence",
+      "category": "collections",
+      "deprecated": "collections.Sequence",
+      "replacement": "collections.abc.Sequence",
+      "regex": "from collections import (.*\\b)Sequence(\\b.*)",
+      "replacement_template": "from collections.abc import \\1Sequence\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.Sequence moved to collections.abc.Sequence"
+    },
+    {
+      "name": "collections_mutablesequence",
+      "category": "collections",
+      "deprecated": "collections.MutableSequence",
+      "replacement": "collections.abc.MutableSequence",
+      "regex": "from collections import (.*\\b)MutableSequence(\\b.*)",
+      "replacement_template": "from collections.abc import \\1MutableSequence\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.MutableSequence moved to collections.abc.MutableSequence"
+    },
+    {
+      "name": "collections_set",
+      "category": "collections",
+      "deprecated": "collections.Set",
+      "replacement": "collections.abc.Set",
+      "regex": "from collections import (.*\\b)Set(\\b.*)",
+      "replacement_template": "from collections.abc import \\1Set\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.Set moved to collections.abc.Set"
+    },
+    {
+      "name": "collections_mutableset",
+      "category": "collections",
+      "deprecated": "collections.MutableSet",
+      "replacement": "collections.abc.MutableSet",
+      "regex": "from collections import (.*\\b)MutableSet(\\b.*)",
+      "replacement_template": "from collections.abc import \\1MutableSet\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.MutableSet moved to collections.abc.MutableSet"
+    },
+    {
+      "name": "collections_iterable",
+      "category": "collections",
+      "deprecated": "collections.Iterable",
+      "replacement": "collections.abc.Iterable",
+      "regex": "from collections import (.*\\b)Iterable(\\b.*)",
+      "replacement_template": "from collections.abc import \\1Iterable\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.Iterable moved to collections.abc.Iterable"
+    },
+    {
+      "name": "collections_iterator",
+      "category": "collections",
+      "deprecated": "collections.Iterator",
+      "replacement": "collections.abc.Iterator",
+      "regex": "from collections import (.*\\b)Iterator(\\b.*)",
+      "replacement_template": "from collections.abc import \\1Iterator\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.Iterator moved to collections.abc.Iterator"
+    },
+    {
+      "name": "collections_callable",
+      "category": "collections",
+      "deprecated": "collections.Callable",
+      "replacement": "collections.abc.Callable",
+      "regex": "from collections import (.*\\b)Callable(\\b.*)",
+      "replacement_template": "from collections.abc import \\1Callable\\2",
+      "required_imports": [],
+      "python_version": "3.3+",
+      "description": "collections.Callable moved to collections.abc.Callable"
+    },
+    {
+      "name": "inspect_getargspec",
+      "category": "inspect",
+      "deprecated": "inspect.getargspec()",
+      "replacement": "inspect.getfullargspec()",
+      "regex": "inspect\\.getargspec\\(",
+      "replacement_template": "inspect.getfullargspec(",
+      "required_imports": [],
+      "python_version": "3.0+",
+      "description": "inspect.getargspec() is deprecated in favor of inspect.getfullargspec()"
+    },
+    {
+      "name": "threading_currentThread",
+      "category": "threading",
+      "deprecated": "threading.currentThread()",
+      "replacement": "threading.current_thread()",
+      "regex": "threading\\.currentThread\\(",
+      "replacement_template": "threading.current_thread(",
+      "required_imports": [],
+      "python_version": "3.10+",
+      "description": "threading.currentThread() is deprecated in favor of threading.current_thread()"
+    },
+    {
+      "name": "threading_activeCount",
+      "category": "threading",
+      "deprecated": "threading.activeCount()",
+      "replacement": "threading.active_count()",
+      "regex": "threading\\.activeCount\\(",
+      "replacement_template": "threading.active_count(",
+      "required_imports": [],
+      "python_version": "3.10+",
+      "description": "threading.activeCount() is deprecated in favor of threading.active_count()"
+    },
+    {
+      "name": "unittest_assertEquals",
+      "category": "unittest",
+      "deprecated": "self.assertEquals()",
+      "replacement": "self.assertEqual()",
+      "regex": "\\bself\\.assertEquals\\(",
+      "replacement_template": "self.assertEqual(",
+      "required_imports": [],
+      "python_version": "3.2+",
+      "description": "self.assertEquals() is deprecated in favor of self.assertEqual()"
+    },
+    {
+      "name": "unittest_assertNotEquals",
+      "category": "unittest",
+      "deprecated": "self.assertNotEquals()",
+      "replacement": "self.assertNotEqual()",
+      "regex": "\\bself\\.assertNotEquals\\(",
+      "replacement_template": "self.assertNotEqual(",
+      "required_imports": [],
+      "python_version": "3.2+",
+      "description": "self.assertNotEquals() is deprecated in favor of self.assertNotEqual()"
+    },
+    {
+      "name": "unittest_assert_",
+      "category": "unittest",
+      "deprecated": "self.assert_()",
+      "replacement": "self.assertTrue()",
+      "regex": "\\bself\\.assert_\\(",
+      "replacement_template": "self.assertTrue(",
+      "required_imports": [],
+      "python_version": "3.2+",
+      "description": "self.assert_() is deprecated in favor of self.assertTrue()"
+    }
+  ]
+}
