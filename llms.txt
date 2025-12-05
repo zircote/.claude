@@ -1,0 +1,287 @@
+# Claude Code Configuration Repository
+
+> Personal configuration for Claude Code CLI containing 120+ specialized agents, 69 skills, custom commands, and coding standards for AI-assisted development.
+
+## Purpose
+
+This repository configures Claude Code (Anthropic's CLI) with:
+- Specialized AI agents for domain-specific tasks
+- Reusable skills for common development workflows
+- Custom slash commands for Git operations
+- Coding standards for multiple languages and frameworks
+- Global behavioral instructions
+
+## Quick Context
+
+- **Target**: Claude Code CLI (`claude` command)
+- **Location**: `~/.claude/` (user's home directory)
+- **Auto-loaded**: `CLAUDE.md` is read automatically as global instructions
+- **Model**: Optimized for Claude Opus 4.5
+
+## Core Files
+
+### CLAUDE.md
+Global instructions that modify Claude's behavior across all sessions:
+- Planning confidence requirements (95%+ before proceeding)
+- MCP query pagination patterns (token limits, batching)
+- Memory agent usage guidelines
+- API response validation rules
+- Environment definitions (prod, cert, int, dev)
+
+### README.md
+Human-readable documentation with repository overview and usage instructions.
+
+## Directory Structure
+
+### /agents/ (120 agents across 10 categories)
+
+Specialized AI assistants with defined tools, capabilities, and domain expertise.
+
+**Format**: YAML frontmatter with `name`, `description`, `model`, `tools` + Markdown body
+
+#### Categories:
+- `01-core-development/` - Full-stack development (11 agents)
+  - api-designer, backend-developer, frontend-developer, fullstack-developer
+  - graphql-architect, microservices-architect, mobile-developer, ui-designer
+  - electron-pro, websocket-engineer, wordpress-master
+
+- `02-language-specialists/` - Language-specific expertise (23 agents)
+  - python-pro, typescript-pro, golang-pro, rust-engineer, java-architect
+  - javascript-pro, php-pro, ruby (rails-expert), swift-expert, kotlin-specialist
+  - cpp-pro, csharp-developer, sql-pro
+  - Framework experts: react-specialist, vue-expert, angular-architect
+  - django-developer, laravel-specialist, spring-boot-engineer, nextjs-developer
+  - dotnet-core-expert, dotnet-framework-4.8-expert, flutter-expert
+
+- `03-infrastructure/` - DevOps, cloud, platform (12 agents)
+  - kubernetes-specialist, terraform-engineer, cloud-architect
+  - devops-engineer, sre-engineer, platform-engineer
+  - database-administrator, deployment-engineer, network-engineer
+  - security-engineer, incident-responder, devops-incident-responder
+
+- `04-quality-security/` - Testing, security, review (11 agents)
+  - qa-expert, test-automator, code-reviewer
+  - security-auditor, penetration-tester, compliance-auditor
+  - accessibility-tester, performance-engineer, chaos-engineer
+  - debugger, error-detective
+
+- `05-data-ai/` - ML, data engineering, analytics (12 agents)
+  - ml-engineer, data-scientist, ai-engineer, llm-architect
+  - data-engineer, data-analyst, nlp-engineer
+  - mlops-engineer, database-optimizer, prompt-engineer
+  - quant-analyst, machine-learning-engineer
+
+- `06-developer-experience/` - Tooling & workflows (12 agents)
+  - cli-developer, build-engineer, tooling-engineer
+  - documentation-engineer, api-documenter, mcp-developer
+  - dx-optimizer, git-workflow-manager, dependency-manager
+  - refactoring-specialist, legacy-modernizer
+
+- `07-specialized-domains/` - Industry-specific (9 agents)
+  - fintech-engineer, blockchain-developer, game-developer
+  - iot-engineer, embedded-systems, mobile-app-developer
+  - payment-integration, risk-manager, seo-specialist
+
+- `08-business-product/` - Non-technical roles (10 agents)
+  - product-manager, project-manager, scrum-master
+  - technical-writer, ux-researcher, business-analyst
+  - customer-success-manager, sales-engineer
+  - content-marketer, legal-advisor
+
+- `09-meta-orchestration/` - Multi-agent coordination (8 agents)
+  - workflow-orchestrator, multi-agent-coordinator
+  - task-distributor, agent-organizer, context-manager
+  - error-coordinator, knowledge-synthesizer, performance-monitor
+
+- `10-research-analysis/` - Information gathering (6 agents)
+  - research-analyst, competitive-analyst, market-researcher
+  - data-researcher, trend-analyst, search-specialist
+
+- Root agents: datadog-pro, datadog-api-expert, embedded-systems
+
+### /skills/ (69 skills)
+
+Reusable capabilities invoked during conversations via the Skill tool.
+
+**Format**: `SKILL.md` with YAML frontmatter (`name`, `description`, `license`) + detailed instructions
+
+#### Categories:
+
+**Document Processing**:
+- `pdf/` - Extract text/tables, merge/split, create, fill forms
+- `docx/` - Word document creation and manipulation
+- `xlsx/` - Excel spreadsheet processing
+- `pptx/` - PowerPoint presentation generation
+
+**Media & Multimodal**:
+- `ai-multimodal/` - Google Gemini API for audio/video/image processing
+- `media-processing/` - FFmpeg and ImageMagick operations
+- `image-enhancer/` - Image quality improvement
+- `canvas-design/` - Visual art creation in PNG/PDF
+- `video-downloader/` - Video acquisition utilities
+
+**Development**:
+- `frontend-development/` - React/TypeScript patterns
+- `backend-development/` - Server-side best practices
+- `databases/` - MongoDB and PostgreSQL operations
+- `devops/` - Cloudflare, Docker, GCP deployment
+- `chrome-devtools/` - Puppeteer browser automation
+- `webapp-testing/` - Web application testing
+- `debugging/` - Systematic debugging approaches (4 sub-skills)
+
+**AI & Prompting**:
+- `anthropic-prompt-engineer/` - Claude prompt optimization
+- `openai-prompt-engineer/` - GPT prompt techniques
+- `anthropic-architect/` - Anthropic solution architecture
+- `sequential-thinking/` - Step-by-step reasoning
+
+**Content & Research**:
+- `docs-seeker/` - Technical documentation search
+- `content-research-writer/` - Research and citation
+- `changelog-generator/` - Git commit to changelog
+- `competitive-ads-extractor/` - Ad analysis
+
+**Utilities**:
+- `file-organizer/` - Intelligent file organization
+- `domain-name-brainstormer/` - Domain availability checking
+- `invoice-organizer/` - Receipt/invoice processing
+- `better-auth/` - Authentication implementation
+- `repomix/` - Repository analysis
+
+**Specialized**:
+- `shopify/` - Shopify development
+- `google-adk-python/` - Google ADK integration
+- `mcp-builder/` - MCP server development
+- `slack-gif-creator/` - Slack content creation
+
+### /commands/ (Custom slash commands)
+
+User-invokable commands via `/command:name` syntax.
+
+**`/git:cm`** - Stage all files and commit (no push)
+- Reviews changes for sensitive data
+- Generates conventional commit messages
+- Splits new files vs changes into separate commits
+
+**`/git:cp`** - Stage, commit, and push
+- Same as cm but includes push to remote
+- Follows conventional commit format (feat, fix, perf, etc.)
+
+**`/git:pr`** - Create pull request
+- Uses `gh` CLI to create PR
+- Accepts target branch argument
+
+### /includes/ (Coding standards)
+
+Environment-specific standards auto-loaded based on context.
+
+- `python.md` - Python 3.13+, uv package manager, ruff/mypy/pytest
+- `golang.md` - Go idioms and patterns
+- `react.md` - React/TypeScript conventions
+- `git.md` - Version control workflows
+- `testing.md` - Testing strategies
+- `documentation.md` - Documentation standards
+- `mcp-reference.md` - Model Context Protocol reference
+- `opus-4-5.md` - Opus 4.5 optimizations
+- `opus-4-5-agent.md` - Agent-specific Opus 4.5 guidance
+
+### /docs/
+
+Additional documentation files.
+- `opus-4-5-migration.md` - Migration guide to Opus 4.5
+
+## File Formats
+
+### Agent Definition (agents/*.md)
+```yaml
+---
+name: agent-name
+description: >
+  Brief description of agent's expertise and when to use it.
+model: inherit  # or specific model
+color: red      # optional UI hint
+tools: Read, Write, Bash, Glob, Grep  # available tools
+---
+
+## Capabilities
+[Detailed capabilities and usage patterns]
+```
+
+### Skill Definition (skills/*/SKILL.md)
+```yaml
+---
+name: skill-name
+description: When to invoke this skill and what it does.
+license: MIT or Proprietary
+---
+
+# Skill Title
+
+## Overview
+[What this skill does]
+
+## Usage
+[How to use the skill]
+
+## Examples
+[Code examples and patterns]
+```
+
+### Command Definition (commands/*/*.md)
+```yaml
+---
+description: What the command does
+argument-hint: [optional-args]  # shown to user
+---
+
+[Detailed instructions for Claude to follow]
+```
+
+## Key Patterns
+
+### Planning Confidence
+Claude must reach 95%+ confidence before implementing plans. Ask clarifying questions until confident.
+
+### MCP Query Pagination
+```python
+# Start with limit=20, estimate tokens
+probe = tool_call(limit=5)
+safe_limit = min(15000 / (estimate(probe) / 5), 50)
+# Never exceed ~20k tokens per response
+```
+
+### Conventional Commits
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `perf:` - Performance improvements (used for .claude/ markdown changes)
+- `chore:` - Maintenance
+- `refactor:`, `docs:`, `style:`, `ci:`, `build:`, `test:`
+
+### Environment Definitions
+Only four environments exist: `prod`, `cert`, `int`, `dev`
+
+## What's Ignored (.gitignore)
+
+Ephemeral/local data not tracked:
+- `history.jsonl`, `todos/`, `plans/` - Session data
+- `settings.local.json`, `.env` - Local config
+- `plugins/` - Reinstallable from marketplace
+- `projects/` - Project-specific data
+- `*.json` - All JSON config files
+- IDE directories, caches, bytecode
+
+## Usage
+
+1. Clone to `~/.claude/`
+2. Claude Code auto-loads `CLAUDE.md` for global instructions
+3. Use Task tool to invoke agents
+4. Use Skill tool to invoke skills
+5. Use `/git:cm`, `/git:cp`, `/git:pr` for Git workflows
+6. Includes are loaded automatically based on detected environment
+
+## Optional Files
+
+- `.env.example` - Environment variable template
+- `skills/.mcp.json.example` - MCP server configuration template
+- `skills/CONTRIBUTING.md` - Skill contribution guidelines
+- `skills/THIRD_PARTY_NOTICES.md` - Third-party licenses
