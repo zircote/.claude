@@ -21,6 +21,49 @@ When working in these environments, read and follow the corresponding file:
 
 **Usage**: Read the relevant include file(s) at the start of environment-specific tasks to ensure compliance with standards.
 
+## Parallel Specialist Subagents
+Leverage the Task tool with specialized subagents from `~/.claude/agents/` for efficiency.
+
+### Agent Categories (`~/.claude/agents/`)
+| Category | Specialists | Use For |
+|----------|-------------|---------|
+| `01-core-development` | frontend-developer, backend-developer, fullstack-developer, api-designer, microservices-architect, mobile-developer | Application architecture, API design, UI/UX implementation |
+| `02-language-specialists` | python-pro, typescript-pro, golang-pro, rust-engineer, java-architect, react-specialist, nextjs-developer | Language-specific implementation, framework expertise |
+| `03-infrastructure` | devops-engineer, sre-engineer, kubernetes-specialist, terraform-engineer, cloud-architect, database-administrator | Infrastructure, deployment, cloud, networking |
+| `04-quality-security` | code-reviewer, security-auditor, penetration-tester, test-automator, performance-engineer, debugger | Code quality, security analysis, testing, debugging |
+| `05-data-ai` | data-scientist, data-engineer, ml-engineer, llm-architect, postgres-pro, prompt-engineer | Data pipelines, ML/AI, database optimization |
+| `06-developer-experience` | documentation-engineer, cli-developer, build-engineer, refactoring-specialist, mcp-developer | DX tooling, documentation, build systems |
+| `07-specialized-domains` | fintech-engineer, blockchain-developer, game-developer, iot-engineer, payment-integration | Domain-specific expertise |
+| `08-business-product` | product-manager, technical-writer, ux-researcher, scrum-master | Product, documentation, process |
+| `09-meta-orchestration` | multi-agent-coordinator, workflow-orchestrator, task-distributor | Complex multi-agent workflows |
+| `10-research-analysis` | research-analyst, competitive-analyst, market-researcher, trend-analyst | Research, analysis, market intelligence |
+
+### Parallel Execution Rules
+- **When to parallelize**: Launch multiple specialists simultaneously when tasks are independent (no output dependencies)
+- **Specialist matching**: Route work to the most domain-appropriate agent from `~/.claude/agents/`
+- **Dependency awareness**: Only serialize when one agent's output informs another's parameters
+- **Consolidation**: Synthesize parallel agent results into a unified response
+
+### Example Patterns
+```
+PARALLEL: Full-stack feature with security review
+→ Launch frontend-developer + backend-developer + security-auditor simultaneously
+
+PARALLEL: Infrastructure + monitoring setup
+→ Launch terraform-engineer + sre-engineer + devops-engineer in parallel
+
+PARALLEL: Code quality sweep
+→ Launch code-reviewer + performance-engineer + test-automator together
+
+SEQUENTIAL: Research → Implementation
+→ research-analyst completes → use findings to guide python-pro implementation
+
+SEQUENTIAL: Design → Build → Review
+→ api-designer → backend-developer → code-reviewer (each depends on prior output)
+```
+
+Prefer parallel specialist agents over sequential single-threaded work when the task naturally decomposes into independent expert domains.
+
 ## MCP Query Pagination
 - Start with limit=20; estimate tokens per item from a small probe.
 - Never exceed ~20k tokens; paginate if needed; split by team/filters if large.
