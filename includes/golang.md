@@ -1,5 +1,15 @@
 # Go Environment Standards
 
+## Specialist Agents
+Leverage specialized agents from `~/.claude/agents/` for Go work:
+
+| Agent | Category | Use For |
+|-------|----------|---------|
+| `golang-pro` | 02-language-specialists | Go idioms, concurrency, error handling |
+| `backend-developer` | 01-core-development | API design, service architecture |
+| `microservices-architect` | 01-core-development | Distributed systems, gRPC, service mesh |
+| `performance-engineer` | 04-quality-security | Profiling, optimization, benchmarking |
+
 ## Runtime & Tooling
 - **Go version**: 1.25+ (use `go1.25` or later)
 - **Module mode**: Always use Go modules (`go.mod`)

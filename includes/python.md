@@ -1,5 +1,15 @@
 # Python Environment Standards
 
+## Specialist Agents
+Leverage specialized agents from `~/.claude/agents/` for Python work:
+
+| Agent | Category | Use For |
+|-------|----------|---------|
+| `python-pro` | 02-language-specialists | Core Python development, async patterns, type hints |
+| `data-scientist` | 05-data-ai | Data analysis, pandas, numpy, scientific computing |
+| `ml-engineer` | 05-data-ai | Machine learning pipelines, model development |
+| `security-auditor` | 04-quality-security | Security scanning (Bandit), vulnerability assessment |
+
 ## Runtime & Package Management
 - **Python version**: 3.14+ (use `python3.14` explicitly when needed)
 - **Package manager**: Astral uv 0.9+ (NOT pip, poetry, or pipenv)

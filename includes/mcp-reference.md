@@ -1,5 +1,14 @@
 # MCP Tools, Skills & Agents Reference
 
+## Specialist Agents
+Leverage specialized agents from `~/.claude/agents/` for MCP development:
+
+| Agent | Category | Use For |
+|-------|----------|---------|
+| `mcp-developer` | 06-developer-experience | MCP server development, tool creation |
+| `tooling-engineer` | 06-developer-experience | CLI tools, developer tooling |
+| `workflow-orchestrator` | 09-meta-orchestration | Multi-agent workflows, orchestration |
+
 This document provides instructions for discovering and using available MCP tools, skills, and agents at runtime. Since these can change based on configuration, use auto-discovery rather than static lists.
 
 ## Auto-Discovery Protocol

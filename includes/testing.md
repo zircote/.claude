@@ -1,5 +1,16 @@
 # Testing Standards (Cross-Language)
 
+## Specialist Agents
+Leverage specialized agents from `~/.claude/agents/` for testing work:
+
+| Agent | Category | Use For |
+|-------|----------|---------|
+| `test-automator` | 04-quality-security | Test frameworks, automation, CI integration |
+| `qa-expert` | 04-quality-security | Test strategy, coverage analysis, quality gates |
+| `performance-engineer` | 04-quality-security | Load testing, performance benchmarks |
+| `chaos-engineer` | 04-quality-security | Resilience testing, failure injection |
+| `accessibility-tester` | 04-quality-security | a11y testing, WCAG compliance |
+
 ## Testing Philosophy
 
 ### Test Pyramid

@@ -1,5 +1,15 @@
 # Documentation Standards
 
+## Specialist Agents
+
+For documentation tasks, leverage these specialized agents:
+
+| Agent | Location | Use For |
+|-------|----------|---------|
+| `documentation-engineer` | `~/.claude/agents/06-developer-experience/` | Documentation systems, automation, site building |
+| `technical-writer` | `~/.claude/agents/08-business-product/` | User-facing docs, tutorials, guides |
+| `api-documenter` | `~/.claude/agents/07-specialized-domains/` | API documentation, OpenAPI specs, SDK docs |
+
 ## README Structure
 
 Every project should have a README.md with these sections:

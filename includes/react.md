@@ -1,5 +1,16 @@
 # React/TypeScript Environment Standards
 
+## Specialist Agents
+Leverage specialized agents from `~/.claude/agents/` for React/TypeScript work:
+
+| Agent | Category | Use For |
+|-------|----------|---------|
+| `react-specialist` | 02-language-specialists | React patterns, hooks, state management |
+| `typescript-pro` | 02-language-specialists | TypeScript types, generics, strict mode |
+| `frontend-developer` | 01-core-development | Component architecture, UI implementation |
+| `ui-designer` | 01-core-development | Design systems, styling, accessibility |
+| `nextjs-developer` | 02-language-specialists | Next.js apps, SSR, API routes |
+
 ## Runtime & Package Management
 - **Node.js**: 24 LTS (Krypton) or 22 LTS (Jod)
 - **Package manager**: pnpm 11+ (NOT npm or yarn)

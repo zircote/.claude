@@ -1,5 +1,14 @@
 # Git & Version Control Standards
 
+## Specialist Agents
+Leverage specialized agents from `~/.claude/agents/` for version control work:
+
+| Agent | Category | Use For |
+|-------|----------|---------|
+| `git-workflow-manager` | 06-developer-experience | Branch strategies, workflows, automation |
+| `code-reviewer` | 04-quality-security | PR reviews, code quality, best practices |
+| `devops-engineer` | 03-infrastructure | CI/CD pipelines, Git hooks, automation |
+
 ## Git Worktree Workflow (Preferred)
 
 **IMPORTANT**: For any multi-branch work, feature development, or parallel task handling, use the `git-worktree` skill. This enables working on multiple branches simultaneously without stashing or context switching.
