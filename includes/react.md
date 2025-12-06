@@ -1,9 +1,9 @@
 # React/TypeScript Environment Standards
 
 ## Runtime & Package Management
-- **Node.js**: 20 LTS or 22+
-- **Package manager**: pnpm (NOT npm or yarn)
-- **TypeScript**: 5.3+ with strict mode
+- **Node.js**: 24 LTS (Krypton) or 22 LTS (Jod)
+- **Package manager**: pnpm 11+ (NOT npm or yarn)
+- **TypeScript**: 5.9+ with strict mode (TS 7.0 beta available with 10x speed)
 
 ### pnpm Commands
 ```bash
@@ -24,13 +24,13 @@ pnpm test                     # Run tests
 pnpm lint                     # Run linter
 ```
 
-## TypeScript Configuration (Strict)
+## TypeScript Configuration (v5.9+, Strict)
 ```json
 // tsconfig.json
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "target": "ES2024",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -59,9 +59,9 @@ pnpm lint                     # Run linter
 }
 ```
 
-## ESLint Configuration
+## ESLint Configuration (v9+, Flat Config)
 ```javascript
-// eslint.config.js (flat config)
+// eslint.config.js (flat config - default in ESLint 9+)
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
@@ -93,7 +93,7 @@ export default tseslint.config(
 );
 ```
 
-## State Management: TanStack Query
+## State Management: TanStack Query (v5.90+)
 ```typescript
 // src/lib/query-client.ts
 import { QueryClient } from '@tanstack/react-query';
@@ -102,7 +102,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30,   // 30 minutes (formerly cacheTime)
+      gcTime: 1000 * 60 * 30,   // 30 minutes
       retry: 1,
       refetchOnWindowFocus: false,
     },
@@ -131,19 +131,16 @@ function useUpdateUser() {
 }
 ```
 
-## Styling: Tailwind CSS
-```javascript
-// tailwind.config.js
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  theme: {
-    extend: {
-      // Custom design tokens
-    },
-  },
-  plugins: [],
-};
+## Styling: Tailwind CSS (v4.0+)
+```css
+/* src/index.css - Tailwind v4 uses CSS-first configuration */
+@import "tailwindcss";
+
+/* Custom theme configuration via CSS variables */
+@theme {
+  --color-brand: #3b82f6;
+  --font-display: "Inter", sans-serif;
+}
 ```
 
 ### Tailwind Patterns
@@ -165,7 +162,7 @@ export function cn(...inputs: ClassValue[]) {
 )} />
 ```
 
-## Testing: Vitest + React Testing Library + Playwright
+## Testing: Vitest (v4.0+) + React Testing Library + Playwright (v1.57+)
 
 ### Vitest Configuration
 ```typescript
@@ -179,6 +176,10 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setup.ts',
+    browser: {
+      enabled: false, // Stable Browser Mode available in v4.0+
+      provider: 'playwright',
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
@@ -223,7 +224,7 @@ describe('Button', () => {
 });
 ```
 
-### Playwright E2E Configuration
+### Playwright E2E Configuration (v1.57+)
 ```typescript
 // playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';

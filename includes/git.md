@@ -176,7 +176,7 @@ git config --global commit.gpgsign true
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -188,7 +188,7 @@ repos:
       - id: detect-private-key
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.13.0
+    rev: v4.10.0
     hooks:
       - id: commitizen
         stages: [commit-msg]

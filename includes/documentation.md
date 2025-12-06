@@ -34,7 +34,7 @@ cp .env.example .env
 
 ## Prerequisites
 
-- Runtime version (e.g., Node.js 20+, Python 3.13+, Go 1.22+)
+- Runtime version (e.g., Node.js 24+, Python 3.14+, Go 1.25+)
 - Required tools (e.g., Docker, pnpm)
 - External services needed (e.g., PostgreSQL, Redis)
 

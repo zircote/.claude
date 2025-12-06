@@ -389,7 +389,7 @@ it('transforms data correctly', () => {
 test:
   runs-on: ubuntu-latest
   steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Unit Tests
       run: |
@@ -407,7 +407,7 @@ test:
         pnpm test:e2e
 
     - name: Upload Coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
 ```
 
 ### Parallel Execution

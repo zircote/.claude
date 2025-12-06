@@ -1,14 +1,14 @@
 # Python Environment Standards
 
 ## Runtime & Package Management
-- **Python version**: 3.13+ (use `python3.13` explicitly when needed)
-- **Package manager**: Astral uv (NOT pip, poetry, or pipenv)
+- **Python version**: 3.14+ (use `python3.14` explicitly when needed)
+- **Package manager**: Astral uv 0.9+ (NOT pip, poetry, or pipenv)
 - **Virtual environments**: `uv venv` or `uv sync` (auto-creates venv)
 
 ### uv Commands
 ```bash
 # Project init
-uv init --python 3.13
+uv init --python 3.14
 
 # Dependencies
 uv add <package>              # Add dependency
@@ -24,16 +24,17 @@ uv run pytest                 # Run tools in venv context
 
 ## Code Quality Pipeline
 Execute in this order:
-1. `uv run ruff format .` — Format code
+1. `uv run ruff format .` — Format code (replaces Black)
 2. `uv run ruff check . --fix` — Lint and auto-fix
 3. `uv run mypy .` — Type check
-4. `uv run black .` — Format code
+4. `uv run bandit -r src/` — Security scan (SAST)
+5. `uv run pip-audit` — Dependency vulnerability scan
 
-### Ruff Configuration
+### Ruff Configuration (v0.14+)
 ```toml
 # pyproject.toml
 [tool.ruff]
-target-version = "py313"
+target-version = "py314"
 line-length = 88
 src = ["src", "tests"]
 
@@ -55,11 +56,11 @@ ignore = ["E501"]  # line length handled by formatter
 known-first-party = ["src"]
 ```
 
-### mypy Configuration (Strict)
+### mypy Configuration (v1.19+, Strict)
 ```toml
 # pyproject.toml
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 strict = true
 warn_return_any = true
 warn_unused_ignores = true
@@ -74,25 +75,61 @@ show_error_codes = true
 plugins = []  # Add "pydantic.mypy" if using Pydantic
 ```
 
-## Testing with pytest
+## Security Tools
+
+### Bandit Configuration (v1.9+)
+Static Application Security Testing (SAST) for Python code.
 ```toml
 # pyproject.toml
-[tool.pytest.ini_options]
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv"]
+skips = ["B101"]  # Skip assert warnings in production code if needed
+
+[tool.bandit.assert_used]
+skips = ["*_test.py", "test_*.py"]
+```
+
+### pip-audit
+Scans dependencies for known vulnerabilities.
+```bash
+# Scan current environment
+uv run pip-audit
+
+# Scan requirements file
+uv run pip-audit -r requirements.txt
+
+# Auto-fix vulnerabilities (upgrade to safe versions)
+uv run pip-audit --fix
+
+# Output as JSON for CI/CD
+uv run pip-audit --format=json
+```
+
+### Installing Security Tools
+```bash
+uv add --dev bandit pip-audit
+```
+
+## Testing with pytest (v9.0+)
+```toml
+# pyproject.toml — Native TOML format (pytest 9.0+)
+[tool.pytest]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = [
-    "-ra",
-    "--strict-markers",
-    "--strict-config",
-    "-v",
-]
+addopts = ["-ra", "--strict-markers", "--strict-config", "-v"]
 filterwarnings = ["error"]
+required_plugins = ["pytest-cov", "pytest-asyncio"]
 ```
 
-### Recommended pytest Plugins
+### Recommended pytest Plugins (Dec 2025)
 ```bash
-uv add --dev pytest pytest-cov pytest-asyncio pytest-mock hypothesis
+# Core testing (requires Python >=3.10)
+uv add --dev pytest              # v9.0.1
+uv add --dev pytest-cov          # v7.0.0
+uv add --dev pytest-asyncio      # v1.3.0
+uv add --dev pytest-mock         # v3.15.1
+uv add --dev hypothesis          # v6.148+ (requires Python >=3.10.2)
 ```
 
 ### Coverage Configuration
@@ -189,13 +226,24 @@ async def managed_resource() -> AsyncIterator[Resource]:
         await resource.close()
 ```
 
-### Pydantic Models (if using)
+### Pydantic Models (v2.12+)
 ```python
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 class Config(BaseModel):
-    model_config = ConfigDict(frozen=True, strict=True)
+    model_config = ConfigDict(
+        frozen=True,
+        strict=True,
+        validate_default=True,
+    )
 
     name: str = Field(..., min_length=1)
     count: int = Field(default=0, ge=0)
+
+    @field_validator("name")
+    @classmethod
+    def name_must_not_be_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("name cannot be whitespace only")
+        return v.strip()
 ```

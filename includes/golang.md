@@ -1,9 +1,9 @@
 # Go Environment Standards
 
 ## Runtime & Tooling
-- **Go version**: 1.22+ (use `go1.22` or later)
+- **Go version**: 1.25+ (use `go1.25` or later)
 - **Module mode**: Always use Go modules (`go.mod`)
-- **Linting**: golangci-lint with strict configuration
+- **Linting**: golangci-lint v2.7+ with strict configuration
 
 ### Common Commands
 ```bash
@@ -26,14 +26,16 @@ go test -cover ./...          # Run with coverage
 go test -v -run TestName      # Run specific test
 ```
 
-## Code Quality: golangci-lint
+## Code Quality: golangci-lint (v2.7+)
 
 ### Configuration
 ```yaml
-# .golangci.yml
+# .golangci.yml (golangci-lint v2 format)
+version: "2"
+
 run:
   timeout: 5m
-  go: "1.22"
+  go: "1.25"
 
 linters:
   enable:
@@ -52,7 +54,6 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
     - forcetypeassert
     - gocritic
     - gofmt
@@ -117,8 +118,8 @@ issues:
 
 ### Running
 ```bash
-# Install
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+# Install (v2.7+)
+go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 
 # Run
 golangci-lint run ./...
