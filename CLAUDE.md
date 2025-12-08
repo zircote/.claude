@@ -17,9 +17,20 @@ When working in these environments, read and follow the corresponding file:
 | Testing (any language) | `~/.claude/includes/testing.md` |
 | Documentation | `~/.claude/includes/documentation.md` |
 | MCP Tools/Skills/Agents | `~/.claude/includes/mcp-reference.md` |
-| Opus 4.5 | `~/.claude/includes/opus-4-5.md` |
+| Opus 4.5 (General) | `~/.claude/includes/opus-4-5.md` |
+| Opus 4.5 (Agentic) | `~/.claude/includes/opus-4-5-agent.md` |
 
 **Usage**: Read the relevant include file(s) at the start of environment-specific tasks to ensure compliance with standards.
+
+## Opus 4.5 Quick Reference
+
+Key behaviors when running as Opus 4.5:
+- **Word sensitivity**: Avoid "think" when extended thinking disabled; use "consider", "evaluate", "believe"
+- **Tool triggering**: More responsive than previous models—use normal phrasing, avoid "CRITICAL: MUST"
+- **Subagent orchestration**: Proactively delegates to subagents when beneficial (native capability)
+- **State discovery**: Excels at discovering state from filesystem—prefer fresh context over compaction
+- **Git for state**: Use git logs and structured files (tests.json, progress.txt) for multi-session tasks
+- **Investigate first**: Read files before answering—no speculation about unread code
 
 ## Parallel Specialist Subagents
 Leverage the Task tool with specialized subagents from `~/.claude/agents/` for efficiency.
