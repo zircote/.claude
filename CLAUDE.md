@@ -17,6 +17,8 @@ When working in these environments, read and follow the corresponding file:
 | Testing (any language) | `~/.claude/includes/testing.md` |
 | Documentation | `~/.claude/includes/documentation.md` |
 | MCP Tools/Skills/Agents | `~/.claude/includes/mcp-reference.md` |
+| GitHub Actions | `~/.claude/includes/github-actions.md` |
+| Version Discovery | `~/.claude/includes/version-discovery.md` |
 | Opus 4.5 (General) | `~/.claude/includes/opus-4-5.md` |
 | Opus 4.5 (Agentic) | `~/.claude/includes/opus-4-5-agent.md` |
 
