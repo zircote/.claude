@@ -104,6 +104,19 @@ The ONLY environments that exists are NO OTHERS EVER UNLESS I EXPLICITLY STATE O
 - int
 - dev
 
+## Prohibited Services (HMHCO)
+
+**Slack is NOT used at HMHCO.** Never include Slack in:
+- Code implementations or examples
+- GitHub Actions workflows (no slack-notify, slack-webhook actions)
+- Notification pathways or alerting configurations
+- Documentation examples
+- CI/CD pipelines
+
+**Microsoft Teams is the standard communication platform.** Use Teams for:
+- CI/CD notifications and alerts
+- Workflow status updates
+- Team communications and integrations
 
 ## Memory Agent MCP
 - Pass the user query EXACTLY as written (no paraphrasing).

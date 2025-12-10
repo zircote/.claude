@@ -10,6 +10,29 @@
 | `security-engineer` | 03-infrastructure | Workflow security, secret management |
 | `cloud-architect` | 03-infrastructure | Multi-cloud deployments, OIDC setup |
 
+## HMHCO Policy: Communications Platform
+
+**Slack is NOT used at HMHCO.** Do not include in workflows:
+- `slackapi/slack-github-action`
+- `rtCamp/action-slack-notify`
+- Any Slack webhook or notification actions
+- Slack incoming webhooks in secrets
+
+**Microsoft Teams is the standard communication platform.** For workflow notifications:
+```yaml
+# Teams notification example (discover current action version first)
+- uses: jdcargile/ms-teams-notification@vX
+  with:
+    github-token: ${{ github.token }}
+    ms-teams-webhook-uri: ${{ secrets.TEAMS_WEBHOOK_URI }}
+    notification-summary: "Build ${{ job.status }}"
+```
+
+Other approved notification methods:
+- PagerDuty (for alerting/incidents)
+- Email notifications
+- GitHub native (Issues, PR comments, Checks)
+
 ## Claude Code Tool Authorization
 
 Recommended tool authorizations for GitHub Actions tasks:
