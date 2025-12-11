@@ -31,7 +31,19 @@ When working in these environments, read and follow the corresponding file:
 
 **Usage**: Read the relevant include file(s) at the start of environment-specific tasks to ensure compliance with standards.
 
-## Opus 4.5 Optimized Commands
+## Custom Commands
+
+### Architecture Planning (`/arch`)
+
+| Command | Description |
+|---------|-------------|
+| `/arch:p <project-idea>` | Strategic project planner with Socratic requirements elicitation, PRD, and implementation plan |
+| `/arch:s [project-id\|--list\|--expired]` | Project status, portfolio listing, find expired plans |
+| `/arch:c <project-path\|project-id>` | Close out completed project, archive artifacts, generate retrospective |
+
+Workflow: `/arch:p` to plan → `/arch:s` to monitor → `/arch:c` to complete
+
+### Opus 4.5 Optimized
 
 | Command | Description |
 |---------|-------------|

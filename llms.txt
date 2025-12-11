@@ -158,6 +158,8 @@ Reusable capabilities invoked during conversations via the Skill tool.
 
 User-invokable commands via `/command:name` syntax.
 
+**Git Commands (`/git:`)**
+
 **`/git:cm`** - Stage all files and commit (no push)
 - Reviews changes for sensitive data
 - Generates conventional commit messages
@@ -170,6 +172,35 @@ User-invokable commands via `/command:name` syntax.
 **`/git:pr`** - Create pull request
 - Uses `gh` CLI to create PR
 - Accepts target branch argument
+
+**Architecture Planning (`/arch:`)**
+
+**`/arch:p <project-idea>`** - Strategic project planner (Opus 4.5)
+- Socratic requirements elicitation with clarifying questions
+- Produces PRD, technical architecture, implementation plan
+- Full artifact lifecycle management in docs/architecture/
+
+**`/arch:s [project-id|--list|--expired]`** - Project status (Sonnet)
+- List all active projects in portfolio
+- Check status of specific project by ID
+- Find expired plans, cleanup stale artifacts
+
+**`/arch:c <project-path|project-id>`** - Project close-out (Sonnet)
+- Archive completed projects to docs/architecture/completed/
+- Generate retrospective document
+- Update project registry
+
+**Opus 4.5 Optimized Commands**
+
+**`/explore <path|pattern|question>`** - Exhaustive codebase exploration
+- Parallel subagents with "very thorough" thoroughness
+- Anti-hallucination enforcement (must read files before claims)
+- Structured deliverable with file inventory
+
+**`/deep-research <topic|url>`** - Multi-phase research protocol
+- Supports codebase, technical, domain, comparative, investigative research
+- Structured deliverables with confidence levels
+- Quality gates before finalizing
 
 ### /includes/ (Coding standards)
 
