@@ -11,19 +11,28 @@ Leverage specialized agents from `~/.claude/agents/` for version control work:
 
 ## Git Worktree Workflow (Preferred)
 
-**IMPORTANT**: For any multi-branch work, feature development, or parallel task handling, use the `git-worktree` skill. This enables working on multiple branches simultaneously without stashing or context switching.
+**IMPORTANT**: For any multi-branch work, feature development, or parallel task handling, **always use the `worktree-manager` skill**. This is the ONLY approved method for managing git worktrees.
 
-### When to Use Git Worktree
+### When to Use worktree-manager
 - Working on a feature while needing to hotfix another branch
 - Reviewing PRs while continuing development
 - Running tests on one branch while coding on another
 - Any scenario involving multiple branches
+- Spinning up parallel Claude Code agents
 
 ### Invoking the Skill
-Use the `worktree-manager` skill for:
-- Creating new worktrees for feature branches
-- Managing existing worktrees
-- Cleaning up completed worktrees
+**Always use `worktree-manager`** for ALL worktree operations:
+- Creating new worktrees: "spin up worktree for feature/X"
+- Checking status: "show worktree status"
+- Managing existing worktrees: "show all worktrees"
+- Cleaning up: "clean up merged worktrees"
+- Launching agents: "launch agent in worktree X"
+
+**DO NOT** use raw `git worktree` commands directly. The `worktree-manager` skill provides:
+- Global registry tracking across all projects
+- Port allocation for parallel services
+- Agent launching in terminal windows
+- Proper cleanup with port release
 
 ## Conventional Commits
 
@@ -144,7 +153,7 @@ docs/PROJ-102-api-documentation
 
 ### Workflow
 ```bash
-# Create feature branch (preferably via git-worktree skill)
+# Create feature branch (use worktree-manager skill for parallel work)
 git checkout -b feature/PROJ-123-new-feature
 
 # Make commits (can be messy during development)

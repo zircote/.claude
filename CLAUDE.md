@@ -118,6 +118,14 @@ The ONLY environments that exists are NO OTHERS EVER UNLESS I EXPLICITLY STATE O
 - Workflow status updates
 - Team communications and integrations
 
+## Git Worktree Management
+
+**Always use the `worktree-manager` skill** for ALL git worktree operations. This is the ONLY approved method.
+
+Trigger phrases: "create worktree", "spin up worktrees", "worktree status", "cleanup worktrees"
+
+**DO NOT** use raw `git worktree` commands directly or create ad-hoc worktree workflows.
+
 ## Memory Agent MCP
 - Pass the user query EXACTLY as written (no paraphrasing).
 - Use proactively for: personal info/preferences/history, entities/projects mentioned before, "Did I…"/"What did I say…" questions.
