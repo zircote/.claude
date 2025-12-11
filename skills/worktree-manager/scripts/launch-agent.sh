@@ -4,8 +4,8 @@
 # Usage: ./launch-agent.sh <worktree-path> [task-description]
 #
 # Examples:
-#   ./launch-agent.sh ~/tmp/worktrees/my-project/feature-auth
-#   ./launch-agent.sh ~/tmp/worktrees/my-project/feature-auth "Implement OAuth login"
+#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth
+#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Implement OAuth login"
 
 set -e
 

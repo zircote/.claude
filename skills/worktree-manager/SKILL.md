@@ -1,11 +1,19 @@
 ---
 name: worktree-manager
-description: Create, manage, and cleanup git worktrees with Claude Code agents across all projects. USE THIS SKILL when user says "create worktree", "spin up worktrees", "new worktree for X", "worktree status", "cleanup worktrees", or wants parallel development branches. Handles worktree creation, dependency installation, validation, agent launching in Ghostty, and global registry management.
+description: Create, manage, and cleanup git worktrees with Claude Code agents across all projects. USE THIS SKILL when user says "create worktree", "spin up worktrees", "new worktree for X", "worktree status", "cleanup worktrees", or wants parallel development branches. Handles worktree creation, dependency installation, validation, agent launching in iTerm2/Ghostty, and global registry management.
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Task
 ---
 
 # Global Worktree Manager
 
-Manage parallel development across ALL projects using git worktrees with Claude Code agents. Each worktree is an isolated copy of the repo on a different branch, stored centrally at `~/tmp/worktrees/`.
+Manage parallel development across ALL projects using git worktrees with Claude Code agents. Each worktree is an isolated copy of the repo on a different branch, stored centrally at `~/Projects/worktrees/`.
 
 **IMPORTANT**: You (Claude) can perform ALL operations manually using standard tools (jq, git, bash). Scripts are helpers, not requirements. If a script fails, fall back to manual operations described in this document.
 
@@ -30,7 +38,7 @@ Manage parallel development across ALL projects using git worktrees with Claude 
 | `~/.claude/worktree-registry.json` | **Global registry** - tracks all worktrees across all projects |
 | `~/.claude/skills/worktree-manager/config.json` | **Skill config** - terminal, shell, port range settings |
 | `~/.claude/skills/worktree-manager/scripts/` | **Helper scripts** - optional, can do everything manually |
-| `~/tmp/worktrees/` | **Worktree storage** - all worktrees live here |
+| `~/Projects/worktrees/` | **Worktree storage** - all worktrees live here |
 | `.claude/worktree.json` (per-project) | **Project config** - optional custom settings |
 
 ---
@@ -38,10 +46,10 @@ Manage parallel development across ALL projects using git worktrees with Claude 
 ## Core Concepts
 
 ### Centralized Worktree Storage
-All worktrees live in `~/tmp/worktrees/<project-name>/<branch-slug>/`
+All worktrees live in `~/Projects/worktrees/<project-name>/<branch-slug>/`
 
 ```
-~/tmp/worktrees/
+~/Projects/worktrees/
 ├── obsidian-ai-agent/
 │   ├── feature-auth/           # branch: feature/auth
 │   ├── feature-payments/       # branch: feature/payments
@@ -78,10 +86,10 @@ Branch names are slugified for filesystem safety by replacing `/` with `-`:
     {
       "id": "unique-uuid",
       "project": "obsidian-ai-agent",
-      "repoPath": "/Users/rasmus/Projects/obsidian-ai-agent",
+      "repoPath": "/Users/User_1/Projects/obsidian-ai-agent",
       "branch": "feature/auth",
       "branchSlug": "feature-auth",
-      "worktreePath": "/Users/rasmus/tmp/worktrees/obsidian-ai-agent/feature-auth",
+      "worktreePath": "/Users/User_1/Projects/worktrees/obsidian-ai-agent/feature-auth",
       "ports": [8100, 8101],
       "createdAt": "2025-12-04T10:00:00Z",
       "validatedAt": "2025-12-04T10:02:00Z",
@@ -161,7 +169,7 @@ jq '.worktrees += [{
   "repoPath": "/path/to/repo",
   "branch": "feature/auth",
   "branchSlug": "feature-auth",
-  "worktreePath": "/Users/me/tmp/worktrees/my-project/feature-auth",
+  "worktreePath": "/Users/User_1/Projects/worktrees/my-project/feature-auth",
   "ports": [8100, 8101],
   "createdAt": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'",
   "validatedAt": null,
@@ -280,14 +288,14 @@ For EACH branch (can run in parallel):
    c. Slugify branch:
       BRANCH_SLUG=$(echo "feature/auth" | tr '/' '-')
    d. Determine worktree path:
-      WORKTREE_PATH=~/tmp/worktrees/$PROJECT/$BRANCH_SLUG
+      WORKTREE_PATH=~/Projects/worktrees/$PROJECT/$BRANCH_SLUG
 
 2. ALLOCATE PORTS
    Option A (script): ~/.claude/skills/worktree-manager/scripts/allocate-ports.sh 2
    Option B (manual): Find 2 unused ports from 8100-8199, add to registry
 
 3. CREATE WORKTREE
-   mkdir -p ~/tmp/worktrees/$PROJECT
+   mkdir -p ~/Projects/worktrees/$PROJECT
    git worktree add $WORKTREE_PATH -b $BRANCH
    # If branch exists already, omit -b flag
 
@@ -531,14 +539,14 @@ Scripts are in `~/.claude/skills/worktree-manager/scripts/`
 # Example:
 ~/.claude/skills/worktree-manager/scripts/register.sh \
   "my-project" "feature/auth" "feature-auth" \
-  "$HOME/tmp/worktrees/my-project/feature-auth" \
+  "$HOME/Projects/worktrees/my-project/feature-auth" \
   "/path/to/repo" "8100,8101" "Implement OAuth"
 ```
 
 ### launch-agent.sh
 ```bash
 ~/.claude/skills/worktree-manager/scripts/launch-agent.sh <worktree-path> [task]
-# Opens new terminal window (Ghostty by default) with Claude Code
+# Opens new terminal window (uses config.json terminal setting) with Claude Code
 ```
 
 ### status.sh
@@ -576,7 +584,7 @@ Location: `~/.claude/skills/worktree-manager/config.json`
     "end": 8199
   },
   "portsPerWorktree": 2,
-  "worktreeBase": "~/tmp/worktrees",
+  "worktreeBase": "~/Projects/worktrees",
   "defaultCopyDirs": [".agents", ".env.example"]
 }
 ```
@@ -613,7 +621,7 @@ lsof -i :<port>
 ```bash
 # Compare registry to actual worktrees
 cat ~/.claude/worktree-registry.json | jq '.worktrees[].worktreePath'
-find ~/tmp/worktrees -maxdepth 2 -type d
+find ~/Projects/worktrees -maxdepth 2 -type d
 
 # Remove orphaned entries or add missing ones
 ```
@@ -637,28 +645,28 @@ find ~/tmp/worktrees -maxdepth 2 -type d
 3. Allocate 4 ports: `~/.claude/skills/worktree-manager/scripts/allocate-ports.sh 4` → `8100 8101 8102 8103`
 4. Create worktrees:
    ```bash
-   mkdir -p ~/tmp/worktrees/obsidian-ai-agent
-   git worktree add ~/tmp/worktrees/obsidian-ai-agent/feature-dark-mode -b feature/dark-mode
-   git worktree add ~/tmp/worktrees/obsidian-ai-agent/fix-login-bug -b fix/login-bug
+   mkdir -p ~/Projects/worktrees/obsidian-ai-agent
+   git worktree add ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode -b feature/dark-mode
+   git worktree add ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug -b fix/login-bug
    ```
 5. Copy .agents/:
    ```bash
-   cp -r .agents ~/tmp/worktrees/obsidian-ai-agent/feature-dark-mode/
-   cp -r .agents ~/tmp/worktrees/obsidian-ai-agent/fix-login-bug/
+   cp -r .agents ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode/
+   cp -r .agents ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug/
    ```
 6. Install deps in each worktree:
    ```bash
-   (cd ~/tmp/worktrees/obsidian-ai-agent/feature-dark-mode && uv sync)
-   (cd ~/tmp/worktrees/obsidian-ai-agent/fix-login-bug && uv sync)
+   (cd ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode && uv sync)
+   (cd ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug && uv sync)
    ```
 7. Validate each (start server, health check, stop)
 8. Register both worktrees in `~/.claude/worktree-registry.json`
 9. Launch agents:
    ```bash
    ~/.claude/skills/worktree-manager/scripts/launch-agent.sh \
-     ~/tmp/worktrees/obsidian-ai-agent/feature-dark-mode "Implement dark mode toggle"
+     ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode "Implement dark mode toggle"
    ~/.claude/skills/worktree-manager/scripts/launch-agent.sh \
-     ~/tmp/worktrees/obsidian-ai-agent/fix-login-bug "Fix login redirect bug"
+     ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug "Fix login redirect bug"
    ```
 10. Report:
     ```
@@ -666,8 +674,8 @@ find ~/tmp/worktrees -maxdepth 2 -type d
 
     | Branch | Ports | Path | Task |
     |--------|-------|------|------|
-    | feature/dark-mode | 8100, 8101 | ~/tmp/worktrees/.../feature-dark-mode | Implement dark mode |
-    | fix/login-bug | 8102, 8103 | ~/tmp/worktrees/.../fix-login-bug | Fix login redirect |
+    | feature/dark-mode | 8100, 8101 | ~/Projects/worktrees/.../feature-dark-mode | Implement dark mode |
+    | fix/login-bug | 8102, 8103 | ~/Projects/worktrees/.../fix-login-bug | Fix login redirect |
 
-    Both agents running in Ghostty windows.
+    Both agents running in terminal windows (per config.json).
     ```
