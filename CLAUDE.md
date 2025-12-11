@@ -21,6 +21,7 @@ When working in these environments, read and follow the corresponding file:
 | Version Discovery | `~/.claude/includes/version-discovery.md` |
 | Opus 4.5 (General) | `~/.claude/includes/opus-4-5.md` |
 | Opus 4.5 (Agentic) | `~/.claude/includes/opus-4-5-agent.md` |
+| HMHCO Organization | `~/.claude/includes/hmhco.md` |
 
 **Usage**: Read the relevant include file(s) at the start of environment-specific tasks to ensure compliance with standards.
 
@@ -96,27 +97,6 @@ for i in range(5):
     if tokens(batch) > 20000: break
     results.extend(batch)
 ```
-
-## Systems Environments
-The ONLY environments that exists are NO OTHERS EVER UNLESS I EXPLICITLY STATE OTHERWISE:
-- prod
-- cert
-- int
-- dev
-
-## Prohibited Services (HMHCO)
-
-**Slack is NOT used at HMHCO.** Never include Slack in:
-- Code implementations or examples
-- GitHub Actions workflows (no slack-notify, slack-webhook actions)
-- Notification pathways or alerting configurations
-- Documentation examples
-- CI/CD pipelines
-
-**Microsoft Teams is the standard communication platform.** Use Teams for:
-- CI/CD notifications and alerts
-- Workflow status updates
-- Team communications and integrations
 
 ## Git Worktree Management
 
