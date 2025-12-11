@@ -17,6 +17,53 @@ Manage parallel development across ALL projects using git worktrees with Claude 
 
 **IMPORTANT**: You (Claude) can perform ALL operations manually using standard tools (jq, git, bash). Scripts are helpers, not requirements. If a script fails, fall back to manual operations described in this document.
 
+---
+
+## ⚠️ MANDATORY FIRST STEP - READ CONFIG BEFORE ANY ACTION
+
+**YOU MUST READ `~/.claude/skills/worktree-manager/config.json` BEFORE doing ANYTHING else.**
+
+This is NON-NEGOTIABLE. The config contains user-specific settings that MUST be respected:
+
+```bash
+# ALWAYS do this FIRST:
+cat ~/.claude/skills/worktree-manager/config.json
+```
+
+**Extract and use these values:**
+| Config Key | What It Controls | NEVER Assume |
+|------------|------------------|--------------|
+| `terminal` | Which terminal app to use (iterm2, ghostty, tmux, etc.) | Don't guess "Ghostty" or "Terminal.app" |
+| `claudeCommand` | The exact command to run Claude | Don't omit flags like `--dangerously-skip-permissions` |
+| `shell` | bash, zsh, or fish | Don't assume bash |
+| `portsPerWorktree` | How many ports per worktree | Don't hardcode 2 |
+| `worktreeBase` | Where worktrees are stored | Don't assume ~/Projects/worktrees |
+| `defaultCopyDirs` | What to copy into worktrees | Don't guess |
+
+**Terminal launch commands MUST use config values:**
+
+```bash
+# For iterm2 (from config):
+osascript <<EOF
+tell application "iTerm2"
+  create window with default profile
+  tell current session of current window
+    write text "cd '$WORKTREE_PATH' && $CLAUDE_COMMAND"
+  end tell
+end tell
+EOF
+
+# For ghostty (from config):
+open -na "Ghostty.app" --args -e $SHELL -c "cd '$WORKTREE_PATH' && $CLAUDE_COMMAND"
+
+# For tmux (from config):
+tmux new-session -d -s "wt-$SLUG" -c "$WORKTREE_PATH" "$SHELL -c '$CLAUDE_COMMAND'"
+```
+
+**FAILURE TO READ CONFIG FIRST = BROKEN WORKTREES**
+
+---
+
 ## When This Skill Activates
 
 **Trigger phrases:**
@@ -278,6 +325,15 @@ jq '.portPool.allocated += [8100] | .portPool.allocated |= unique | .portPool.al
 **You do (can parallelize with subagents):**
 
 ```
+⚠️ STEP 0 - MANDATORY CONFIG READ (do this ONCE, before anything else):
+   CONFIG=$(cat ~/.claude/skills/worktree-manager/config.json)
+   TERMINAL=$(echo "$CONFIG" | jq -r '.terminal')
+   CLAUDE_CMD=$(echo "$CONFIG" | jq -r '.claudeCommand')
+   SHELL_TYPE=$(echo "$CONFIG" | jq -r '.shell')
+   PORTS_PER_WT=$(echo "$CONFIG" | jq -r '.portsPerWorktree')
+   WT_BASE=$(echo "$CONFIG" | jq -r '.worktreeBase' | sed "s|~|$HOME|")
+   COPY_DIRS=$(echo "$CONFIG" | jq -r '.defaultCopyDirs[]')
+
 For EACH branch (can run in parallel):
 
 1. SETUP
@@ -317,9 +373,13 @@ For EACH branch (can run in parallel):
    Option A (script): ~/.claude/skills/worktree-manager/scripts/register.sh ...
    Option B (manual): Update ~/.claude/worktree-registry.json with jq
 
-8. LAUNCH AGENT
+8. LAUNCH AGENT (USE CONFIG VALUES FROM STEP 0!)
    Option A (script): ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "task"
-   Option B (manual): Open terminal manually, cd to path, run claude
+   Option B (manual): Use $TERMINAL and $CLAUDE_CMD from config:
+      - iterm2: osascript to create window, write "cd $PATH && $CLAUDE_CMD"
+      - ghostty: open -na "Ghostty.app" --args -e $SHELL -c "cd $PATH && $CLAUDE_CMD"
+      - tmux: tmux new-session -d -s "name" -c "$PATH" "$CLAUDE_CMD"
+   ⚠️ NEVER hardcode terminal app or claude command - ALWAYS use config values!
 
 AFTER ALL COMPLETE:
 - Report summary table to user
@@ -346,23 +406,38 @@ cat ~/.claude/worktree-registry.json | jq -r ".worktrees[] | select(.project == 
 
 ### 3. Launch Agent Manually
 
-If `launch-agent.sh` fails:
-
-**For Ghostty:**
+⚠️ **FIRST: Read config to get terminal and claudeCommand:**
 ```bash
-open -na "Ghostty.app" --args -e bash -c "cd '$WORKTREE_PATH' && claude --dangerously-skip-permissions"
+CONFIG=$(cat ~/.claude/skills/worktree-manager/config.json)
+TERMINAL=$(echo "$CONFIG" | jq -r '.terminal')
+CLAUDE_CMD=$(echo "$CONFIG" | jq -r '.claudeCommand')
 ```
 
-**For iTerm2:**
+**Then use the CONFIGURED terminal (examples below):**
+
+**For iTerm2** (when `"terminal": "iterm2"`):
 ```bash
-osascript -e 'tell application "iTerm2" to create window with default profile' \
-  -e 'tell application "iTerm2" to tell current session of current window to write text "cd '"$WORKTREE_PATH"' && claude"'
+osascript <<EOF
+tell application "iTerm2"
+  create window with default profile
+  tell current session of current window
+    write text "cd '$WORKTREE_PATH' && $CLAUDE_CMD"
+  end tell
+end tell
+EOF
 ```
 
-**For tmux:**
+**For Ghostty** (when `"terminal": "ghostty"`):
 ```bash
-tmux new-session -d -s "wt-$PROJECT-$BRANCH_SLUG" -c "$WORKTREE_PATH" "bash -c 'claude --dangerously-skip-permissions'"
+open -na "Ghostty.app" --args -e bash -c "cd '$WORKTREE_PATH' && $CLAUDE_CMD"
 ```
+
+**For tmux** (when `"terminal": "tmux"`):
+```bash
+tmux new-session -d -s "wt-$PROJECT-$BRANCH_SLUG" -c "$WORKTREE_PATH" "bash -c '$CLAUDE_CMD'"
+```
+
+⚠️ **NEVER assume which terminal to use - ALWAYS check config.json first!**
 
 ### 4. Cleanup Worktree
 
@@ -640,35 +715,49 @@ find ~/Projects/worktrees -maxdepth 2 -type d
 **User:** "Spin up 2 worktrees for feature/dark-mode and fix/login-bug"
 
 **You:**
-1. Detect project: `obsidian-ai-agent` (from git remote)
-2. Detect package manager: `uv` (found uv.lock)
-3. Allocate 4 ports: `~/.claude/skills/worktree-manager/scripts/allocate-ports.sh 4` → `8100 8101 8102 8103`
-4. Create worktrees:
+1. **⚠️ READ CONFIG FIRST:**
+   ```bash
+   cat ~/.claude/skills/worktree-manager/config.json
+   # Returns: {"terminal": "iterm2", "claudeCommand": "claude --dangerously-skip-permissions", ...}
+   ```
+   Extract: `TERMINAL=iterm2`, `CLAUDE_CMD="claude --dangerously-skip-permissions"`
+
+2. Detect project: `obsidian-ai-agent` (from git remote)
+3. Detect package manager: `uv` (found uv.lock)
+4. Allocate 4 ports: `~/.claude/skills/worktree-manager/scripts/allocate-ports.sh 4` → `8100 8101 8102 8103`
+5. Create worktrees:
    ```bash
    mkdir -p ~/Projects/worktrees/obsidian-ai-agent
    git worktree add ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode -b feature/dark-mode
    git worktree add ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug -b fix/login-bug
    ```
-5. Copy .agents/:
+6. Copy .agents/:
    ```bash
    cp -r .agents ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode/
    cp -r .agents ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug/
    ```
-6. Install deps in each worktree:
+7. Install deps in each worktree:
    ```bash
    (cd ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode && uv sync)
    (cd ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug && uv sync)
    ```
-7. Validate each (start server, health check, stop)
-8. Register both worktrees in `~/.claude/worktree-registry.json`
-9. Launch agents:
-   ```bash
-   ~/.claude/skills/worktree-manager/scripts/launch-agent.sh \
-     ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode "Implement dark mode toggle"
-   ~/.claude/skills/worktree-manager/scripts/launch-agent.sh \
-     ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug "Fix login redirect bug"
-   ```
-10. Report:
+8. Validate each (start server, health check, stop)
+9. Register both worktrees in `~/.claude/worktree-registry.json`
+10. **Launch agents using CONFIGURED terminal (`iterm2`) and command:**
+    ```bash
+    # Using iTerm2 as specified in config.json:
+    for path in ~/Projects/worktrees/obsidian-ai-agent/feature-dark-mode ~/Projects/worktrees/obsidian-ai-agent/fix-login-bug; do
+      osascript <<EOF
+    tell application "iTerm2"
+      create window with default profile
+      tell current session of current window
+        write text "cd '$path' && claude --dangerously-skip-permissions"
+      end tell
+    end tell
+    EOF
+    done
+    ```
+11. Report:
     ```
     Created 2 worktrees with agents:
 
@@ -677,5 +766,5 @@ find ~/Projects/worktrees -maxdepth 2 -type d
     | feature/dark-mode | 8100, 8101 | ~/Projects/worktrees/.../feature-dark-mode | Implement dark mode |
     | fix/login-bug | 8102, 8103 | ~/Projects/worktrees/.../fix-login-bug | Fix login redirect |
 
-    Both agents running in terminal windows (per config.json).
+    Both agents running in iTerm2 windows (per config.json: terminal=iterm2, claudeCommand=claude --dangerously-skip-permissions).
     ```
