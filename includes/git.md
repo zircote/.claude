@@ -20,7 +20,7 @@ Leverage specialized agents from `~/.claude/agents/` for version control work:
 - Any scenario involving multiple branches
 
 ### Invoking the Skill
-Use the `git-worktree` skill for:
+Use the `worktree-manager` skill for:
 - Creating new worktrees for feature branches
 - Managing existing worktrees
 - Cleaning up completed worktrees
