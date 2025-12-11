@@ -1,3 +1,9 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
+
 # Global Claude Instructions — Concise
 
 **ALWAYS** ask questions when producing a plan until you have reached 95% or GREATER confidence. ALWAYS DO THIS.
@@ -24,6 +30,30 @@ When working in these environments, read and follow the corresponding file:
 | HMHCO Organization | `~/.claude/includes/hmhco.md` |
 
 **Usage**: Read the relevant include file(s) at the start of environment-specific tasks to ensure compliance with standards.
+
+## Opus 4.5 Optimized Commands
+
+| Command | Description |
+|---------|-------------|
+| `/explore <path\|pattern\|question>` | Exhaustive codebase exploration with parallel subagents and anti-hallucination enforcement |
+| `/deep-research <topic\|url>` | Multi-phase research protocol with structured deliverables and quality gates |
+
+## Git Worktree Management
+
+**Always use the `worktree-manager` skill** for ALL git worktree operations. This is the ONLY approved method.
+
+Trigger phrases: "create worktree", "spin up worktrees", "worktree status", "cleanup worktrees"
+
+**DO NOT** use raw `git worktree` commands directly or create ad-hoc worktree workflows.
+
+## Plugin Maintenance
+
+Plugin patches are stored in `~/.claude/patches/`. After plugin updates, reapply patches:
+```bash
+cp -r ~/.claude/patches/<plugin>-<version>/* ~/.claude/plugins/cache/claude-code-plugins/<plugin>/<version>/
+```
+
+For detailed repository structure, see `~/.claude/llms.txt`.
 
 ## Opus 4.5 Quick Reference
 
@@ -77,43 +107,6 @@ SEQUENTIAL: Design → Build → Review
 ```
 
 Prefer parallel specialist agents over sequential single-threaded work when the task naturally decomposes into independent expert domains.
-
-## MCP Query Pagination
-- Start with limit=20; estimate tokens per item from a small probe.
-- Never exceed ~20k tokens; paginate if needed; split by team/filters if large.
-- Provide partial results with clear notice when truncated.
-- On "exceeds maximum allowed tokens": drop limit to 10, paginate, report "Retrieved X of Y due to token limits".
-- Pattern:
-```python
-# Recon
-probe = tool_call(limit=5)
-tokens_per_item = estimate(probe) / 5
-safe_limit = min(15000 / tokens_per_item, 50)
-
-# Batches (max 5)
-results = []
-for i in range(5):
-    batch = tool_call(limit=safe_limit, offset=i * safe_limit)
-    if tokens(batch) > 20000: break
-    results.extend(batch)
-```
-
-## Git Worktree Management
-
-**Always use the `worktree-manager` skill** for ALL git worktree operations. This is the ONLY approved method.
-
-Trigger phrases: "create worktree", "spin up worktrees", "worktree status", "cleanup worktrees"
-
-**DO NOT** use raw `git worktree` commands directly or create ad-hoc worktree workflows.
-
-## Memory Agent MCP
-- Pass the user query EXACTLY as written (no paraphrasing).
-- Use proactively for: personal info/preferences/history, entities/projects mentioned before, "Did I…"/"What did I say…" questions.
-- Not for: general knowledge, real‑time data, math/logic, hypothetical topics.
-- Integrate results naturally; if missing, say so and offer options; combine with general knowledge.
-- Filters: agent auto-applies from .filters; only add tags if user includes them.
-- Errors: check memory dir structure and user.md; suggest reconnect; offer to proceed without memory.
-- Key: pass unmodified; use proactively when helpful; don’t announce "checking memory".
 
 ## API Response Validation
 - Treat unexpected empties as suspicious. Do not proceed.
