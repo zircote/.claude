@@ -1,16 +1,42 @@
 #!/bin/bash
-# launch-agent.sh - Launch Claude Code in a new Ghostty terminal for a worktree
+# launch-agent.sh - Launch Claude Code in a new terminal for a worktree
 #
-# Usage: ./launch-agent.sh <worktree-path> [task-description]
+# Usage: ./launch-agent.sh <worktree-path> [task-description] [--prompt "template"]
 #
 # Examples:
 #   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth
 #   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Implement OAuth login"
+#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/review-code"
+#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Optimize" --prompt "analyze {{service}} performance"
+#
+# Template Variables (for --prompt):
+#   {{service}}       - Branch slug (e.g., "feature-auth")
+#   {{branch}}        - Full branch name (e.g., "feature/auth")
+#   {{branch_slug}}   - Same as {{service}}
+#   {{project}}       - Project name
+#   {{worktree_path}} - Full worktree path
+#   {{ports}}         - Allocated ports (comma-separated)
+#   {{port}}          - First allocated port
 
 set -e
 
 WORKTREE_PATH="$1"
 TASK="$2"
+PROMPT_TEMPLATE=""
+
+# Parse optional --prompt argument after positional args
+shift 2 2>/dev/null || shift $# 2>/dev/null
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --prompt|-p)
+            PROMPT_TEMPLATE="$2"
+            shift 2
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
 
 # Validate input
 if [ -z "$WORKTREE_PATH" ]; then
@@ -63,20 +89,63 @@ BRANCH=$(cd "$WORKTREE_PATH" && git branch --show-current 2>/dev/null || basenam
 # Get project name from path
 PROJECT=$(basename "$(dirname "$WORKTREE_PATH")")
 
+# Get branch slug (for template substitution)
+BRANCH_SLUG=$(basename "$WORKTREE_PATH")
+
+# Get ports from registry (for template substitution)
+PORTS=""
+PORT=""
+if [ -f "$HOME/.claude/worktree-registry.json" ] && command -v jq &> /dev/null; then
+    PORTS=$(jq -r ".worktrees[] | select(.worktreePath == \"$WORKTREE_PATH\") | .ports | join(\",\")" "$HOME/.claude/worktree-registry.json" 2>/dev/null || echo "")
+    PORT=$(echo "$PORTS" | cut -d',' -f1)
+fi
+
+# Template variable substitution function
+substitute_template() {
+    local template="$1"
+    template="${template//\{\{service\}\}/$BRANCH_SLUG}"
+    template="${template//\{\{branch\}\}/$BRANCH}"
+    template="${template//\{\{branch_slug\}\}/$BRANCH_SLUG}"
+    template="${template//\{\{project\}\}/$PROJECT}"
+    template="${template//\{\{worktree_path\}\}/$WORKTREE_PATH}"
+    template="${template//\{\{ports\}\}/$PORTS}"
+    template="${template//\{\{port\}\}/$PORT}"
+    echo "$template"
+}
+
+# Build Claude command with optional -p flag for auto-execution
+build_claude_cmd() {
+    local base_cmd="$1"
+    local prompt="$2"
+
+    if [ -n "$prompt" ]; then
+        local substituted_prompt
+        substituted_prompt=$(substitute_template "$prompt")
+        # Escape single quotes for shell safety
+        substituted_prompt="${substituted_prompt//\'/\'\\\'\'}"
+        echo "$base_cmd -p '$substituted_prompt'"
+    else
+        echo "$base_cmd"
+    fi
+}
+
+# Build final Claude command (with prompt if provided)
+FINAL_CLAUDE_CMD=$(build_claude_cmd "$CLAUDE_CMD" "$PROMPT_TEMPLATE")
+
 # Build the command to run in the new terminal
 # For fish: use 'and'/'or' instead of '&&'/'||'
 if [ "$SHELL_CMD" = "fish" ]; then
     if [ -n "$TASK" ]; then
-        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'; and echo 'Task: $TASK'; and echo ''; and $CLAUDE_CMD"
+        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'; and echo 'Task: $TASK'; and echo ''; and $FINAL_CLAUDE_CMD"
     else
-        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'; and echo ''; and $CLAUDE_CMD"
+        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'; and echo ''; and $FINAL_CLAUDE_CMD"
     fi
 else
     # bash/zsh syntax
     if [ -n "$TASK" ]; then
-        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH' && echo 'Task: $TASK' && echo '' && $CLAUDE_CMD"
+        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH' && echo 'Task: $TASK' && echo '' && $FINAL_CLAUDE_CMD"
     else
-        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH' && echo '' && $CLAUDE_CMD"
+        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH' && echo '' && $FINAL_CLAUDE_CMD"
     fi
 fi
 
@@ -96,7 +165,7 @@ case "$TERMINAL" in
 tell application "iTerm2"
     create window with default profile
     tell current session of current window
-        write text "cd '$WORKTREE_PATH' && $CLAUDE_CMD"
+        write text "cd '$WORKTREE_PATH' && $FINAL_CLAUDE_CMD"
     end tell
 end tell
 EOF
@@ -108,7 +177,7 @@ EOF
             exit 1
         fi
         SESSION_NAME="wt-$PROJECT-$(echo "$BRANCH" | tr '/' '-')"
-        tmux new-session -d -s "$SESSION_NAME" -c "$WORKTREE_PATH" "$SHELL_CMD -c '$CLAUDE_CMD'"
+        tmux new-session -d -s "$SESSION_NAME" -c "$WORKTREE_PATH" "$SHELL_CMD -c '$FINAL_CLAUDE_CMD'"
         echo "   tmux session: $SESSION_NAME (attach with: tmux attach -t $SESSION_NAME)"
         ;;
 
@@ -150,4 +219,7 @@ echo "   Branch: $BRANCH"
 echo "   Path: $WORKTREE_PATH"
 if [ -n "$TASK" ]; then
     echo "   Task: $TASK"
+fi
+if [ -n "$PROMPT_TEMPLATE" ]; then
+    echo "   Prompt: $(substitute_template "$PROMPT_TEMPLATE")"
 fi

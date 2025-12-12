@@ -68,13 +68,16 @@ tmux new-session -d -s "wt-$SLUG" -c "$WORKTREE_PATH" "$SHELL -c '$CLAUDE_COMMAN
 
 **Trigger phrases:**
 - "spin up worktrees for X, Y, Z"
+- "spin up worktrees for X, Y, Z with prompt '...'"
 - "create 3 worktrees for features A, B, C"
 - "new worktree for feature/auth"
+- "new worktree for feature/auth with prompt '...'"
 - "what's the status of my worktrees?"
 - "show all worktrees" / "show worktrees for this project"
 - "clean up merged worktrees"
 - "clean up the auth worktree"
 - "launch agent in worktree X"
+- "launch agent in worktree X with prompt '...'"
 
 ---
 
@@ -374,12 +377,21 @@ For EACH branch (can run in parallel):
    Option B (manual): Update ~/.claude/worktree-registry.json with jq
 
 8. LAUNCH AGENT (USE CONFIG VALUES FROM STEP 0!)
-   Option A (script): ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "task"
-   Option B (manual): Use $TERMINAL and $CLAUDE_CMD from config:
+   Option A (script with prompt):
+     ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "task" --prompt "template"
+   Option B (script without prompt):
+     ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "task"
+   Option C (manual with prompt): Substitute template vars, append -p flag:
+      SUBSTITUTED=$(echo "$PROMPT" | sed "s/{{service}}/$BRANCH_SLUG/g; s/{{branch}}/$BRANCH/g; s/{{project}}/$PROJECT/g")
+      - iterm2: osascript to create window, write "cd $PATH && $CLAUDE_CMD -p '$SUBSTITUTED'"
+      - ghostty: open -na "Ghostty.app" --args -e $SHELL -c "cd $PATH && $CLAUDE_CMD -p '$SUBSTITUTED'"
+      - tmux: tmux new-session -d -s "name" -c "$PATH" "$CLAUDE_CMD -p '$SUBSTITUTED'"
+   Option D (manual without prompt): Use $TERMINAL and $CLAUDE_CMD from config:
       - iterm2: osascript to create window, write "cd $PATH && $CLAUDE_CMD"
       - ghostty: open -na "Ghostty.app" --args -e $SHELL -c "cd $PATH && $CLAUDE_CMD"
       - tmux: tmux new-session -d -s "name" -c "$PATH" "$CLAUDE_CMD"
    ⚠️ NEVER hardcode terminal app or claude command - ALWAYS use config values!
+   ⚠️ When user provides a prompt template, ALWAYS substitute variables before launching
 
 AFTER ALL COMPLETE:
 - Report summary table to user
@@ -576,6 +588,60 @@ You:
 
 ---
 
+## Initial Prompts (Auto-Execute)
+
+Launch Claude Code agents with a prompt that runs immediately when the instance starts. Perfect for automating tasks across multiple worktrees.
+
+### Syntax
+
+Add `--prompt "template"` when calling `launch-agent.sh`:
+
+```bash
+~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "$TASK" --prompt "template"
+```
+
+Or in natural language:
+```
+spin up worktrees for auth, payments, users with prompt "run tests for {{service}}"
+```
+
+### Template Variables
+
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `{{service}}` | Branch slug | `feature-auth` |
+| `{{branch}}` | Full branch name | `feature/auth` |
+| `{{branch_slug}}` | Same as service | `feature-auth` |
+| `{{project}}` | Project name | `my-api` |
+| `{{worktree_path}}` | Full path | `/Users/.../worktrees/my-api/feature-auth` |
+| `{{port}}` | First allocated port | `8100` |
+| `{{ports}}` | All ports (comma-sep) | `8100,8101` |
+
+### How It Works
+
+1. User provides prompt template with optional `{{variable}}` placeholders
+2. `launch-agent.sh` substitutes variables with worktree-specific values
+3. Claude Code launches with `-p` flag for headless auto-execution
+4. The prompt runs immediately—no user interaction required
+
+### Batch Example
+
+```
+User: "spin up worktrees for auth, payments with prompt 'analyze {{service}} for security issues'"
+
+Result: 2 Claude instances launch:
+  - auth worktree:     claude ... -p 'analyze auth for security issues'
+  - payments worktree: claude ... -p 'analyze payments for security issues'
+```
+
+### Valid Prompt Types
+
+- Slash commands: `"/review-code"`, `"/deep-research auth flow"`
+- Natural language: `"fix all TypeScript errors"`, `"refactor {{service}} for performance"`
+- Multi-line instructions (escape newlines or use slash commands)
+
+---
+
 ## Safety Guidelines
 
 1. **Before cleanup**, check PR status:
@@ -620,8 +686,23 @@ Scripts are in `~/.claude/skills/worktree-manager/scripts/`
 
 ### launch-agent.sh
 ```bash
-~/.claude/skills/worktree-manager/scripts/launch-agent.sh <worktree-path> [task]
+~/.claude/skills/worktree-manager/scripts/launch-agent.sh <worktree-path> [task] [--prompt "template"]
 # Opens new terminal window (uses config.json terminal setting) with Claude Code
+# Optional: --prompt passes a template that gets variable-substituted and auto-executed via -p flag
+#
+# Template Variables:
+#   {{service}}       - Branch slug (e.g., "feature-auth")
+#   {{branch}}        - Full branch name (e.g., "feature/auth")
+#   {{branch_slug}}   - Same as {{service}}
+#   {{project}}       - Project name
+#   {{worktree_path}} - Full worktree path
+#   {{ports}}         - Allocated ports (comma-separated)
+#   {{port}}          - First allocated port
+#
+# Examples:
+#   launch-agent.sh ~/Projects/worktrees/proj/auth-service "Optimize service"
+#   launch-agent.sh ~/Projects/worktrees/proj/auth-service "" --prompt "/review-code"
+#   launch-agent.sh ~/Projects/worktrees/proj/auth "" --prompt "analyze {{service}} performance"
 ```
 
 ### status.sh

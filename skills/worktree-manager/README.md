@@ -78,6 +78,97 @@ The skill activates automatically when you mention worktrees:
 - "What's the status of my worktrees?"
 - "Clean up the auth worktree"
 
+## Initial Prompts (Auto-Execute)
+
+Launch Claude Code agents with a prompt that runs immediately when the instance starts. Perfect for automating repetitive tasks across multiple worktrees.
+
+### Basic Syntax
+
+Add `with prompt "your prompt here"` to any worktree creation command:
+
+```
+spin up worktrees for feature/auth, feature/payments with prompt "run all tests"
+```
+
+### Template Variables
+
+Use variables to customize prompts per worktree:
+
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `{{service}}` | Branch slug (short name) | `feature-auth` |
+| `{{branch}}` | Full branch name | `feature/auth` |
+| `{{branch_slug}}` | Same as `{{service}}` | `feature-auth` |
+| `{{project}}` | Project name | `my-api` |
+| `{{worktree_path}}` | Full path to worktree | `/Users/.../worktrees/my-api/feature-auth` |
+| `{{port}}` | First allocated port | `8100` |
+| `{{ports}}` | All allocated ports | `8100,8101` |
+
+### Examples
+
+**Run tests on multiple services:**
+```
+spin up worktrees for auth, payments, users with prompt "run the test suite for {{service}} and fix any failures"
+```
+
+**Code review:**
+```
+create worktree for feature/new-api with prompt "/review-code"
+```
+
+**Custom task per service:**
+```
+spin up worktrees for api, frontend with prompt "analyze {{service}} performance and suggest optimizations"
+```
+
+**Using slash commands:**
+```
+new worktree for fix/login-bug with prompt "/deep-research the login authentication flow"
+```
+
+**Natural language prompts:**
+```
+spin up worktrees for auth, billing with prompt "refactor {{service}} to use the new error handling pattern"
+```
+
+### How It Works
+
+1. You provide a prompt template with optional `{{variable}}` placeholders
+2. For each worktree, variables are replaced with that worktree's values
+3. Claude Code launches with the `-p` flag for headless auto-execution
+4. The prompt runs immediately—no user interaction required
+
+### Tips
+
+- **Any valid prompt works**: Natural language, slash commands, multi-line instructions
+- **Combine with tasks**: The task description (shown in terminal) provides context; the prompt auto-executes
+- **Escape quotes carefully**: Use single quotes inside double-quoted prompts or vice versa
+- **Long prompts**: For complex instructions, consider creating a slash command and referencing it
+
+### Script Usage
+
+You can also use the launch script directly:
+
+```bash
+# With task only (no auto-execute)
+./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Implement OAuth"
+
+# With prompt (auto-executes)
+./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/review-code"
+
+# With both task and prompt
+./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Optimize auth" --prompt "analyze {{service}} performance"
+```
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Prompt not executing | Ensure `claudeCommand` in config.json doesn't already include `-p` |
+| Variables not substituting | Check spelling: `{{service}}` not `{service}` or `{{ service }}` |
+| Quotes breaking command | Escape inner quotes or use alternate quote style |
+| Claude exits immediately | This is expected with `-p` flag—it runs headless and exits |
+
 ## Requirements
 
 - `jq` — Install with `brew install jq` (macOS) or `apt install jq` (Linux)
