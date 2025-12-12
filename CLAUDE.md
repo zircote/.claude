@@ -40,6 +40,10 @@ When working in these environments, read and follow the corresponding file:
 | `/git:cm` | Stage all files and create a commit (conventional commits, splits new vs modified) |
 | `/git:cp` | Stage, commit, and push all changes |
 | `/git:pr [to-branch]` | Create a pull request using `gh` CLI |
+| `/git:fr [remote] [branch]` | Fetch from remote and rebase current branch onto remote branch |
+| `/git:sync [remote] [branch]` | Full sync: fetch, rebase, and push (with confirmation) |
+| `/git:ff [remote] [branch]` | Fast-forward merge only (no rebase, no merge commits) |
+| `/git:prune [--force]` | Clean up stale local branches (dry-run by default) |
 
 ### Architecture Planning (`/arch`)
 
