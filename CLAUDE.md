@@ -46,10 +46,24 @@ When working in these environments, read and follow the corresponding file:
 | Command | Description |
 |---------|-------------|
 | `/arch:p <project-idea>` | Strategic project planner with Socratic requirements elicitation, PRD, and implementation plan |
+| `/arch:i [project-id\|project-slug]` | Implementation progress tracker with PROGRESS.md checkpoint file, task tracking, and document sync |
 | `/arch:s [project-id\|--list\|--expired]` | Project status, portfolio listing, find expired plans |
 | `/arch:c <project-path\|project-id>` | Close out completed project, archive artifacts, generate retrospective |
 
-Workflow: `/arch:p` to plan → `/arch:s` to monitor → `/arch:c` to complete
+Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor → `/arch:c` to complete
+
+**PROGRESS.md Checkpoint System**: The `/arch:i` command creates and maintains a PROGRESS.md file in the project directory that:
+- Tracks task status (pending/in-progress/done/skipped) with timestamps
+- Calculates phase and project progress automatically
+- Logs divergences from the original plan
+- Syncs state to IMPLEMENTATION_PLAN.md checkboxes and README.md frontmatter
+- Persists state across Claude sessions
+
+**Completed Architecture Projects**:
+- `docs/architecture/completed/2025-12-12-arch-lifecycle-automation/` - Architecture Lifecycle Automation
+  - Completed: 2025-12-12
+  - Outcome: success
+  - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, RETROSPECTIVE.md
 
 ### Opus 4.5 Optimized
 
