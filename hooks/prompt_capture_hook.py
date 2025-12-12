@@ -140,63 +140,6 @@ def is_logging_enabled(cwd: str) -> bool:
     return find_active_project_dir(cwd) is not None
 
 
-def is_arch_context(input_data: Dict[str, Any]) -> bool:
-    """
-    Detect if current session is within /arch:* command context.
-
-    Detection strategies:
-    1. Check if user_prompt starts with /arch:
-    2. Check transcript for recent /arch: commands
-    3. Check for arch command markers in session
-
-    Args:
-        input_data: Hook input containing user_prompt, transcript_path, etc.
-
-    Returns:
-        True if in an /arch:* session, False otherwise
-    """
-    user_prompt = input_data.get("user_prompt", "")
-
-    # Strategy 1: Direct command detection
-    # Check if user is running an /arch: command right now
-    if user_prompt.strip().startswith("/arch:"):
-        return True
-
-    # Strategy 2: Check transcript for recent /arch: activity
-    # This catches follow-up prompts within an /arch session
-    transcript_path = input_data.get("transcript_path", "")
-    if transcript_path and os.path.isfile(transcript_path):
-        try:
-            with open(transcript_path, "r", encoding="utf-8") as f:
-                # Read last 50KB of transcript (recent context)
-                f.seek(0, 2)  # Go to end
-                file_size = f.tell()
-                read_size = min(file_size, 50 * 1024)
-                f.seek(max(0, file_size - read_size))
-                recent_content = f.read()
-
-                # Look for /arch: command patterns
-                arch_patterns = [
-                    "/arch:p",
-                    "/arch:i",
-                    "/arch:s",
-                    "/arch:c",
-                    "/arch:log",
-                    "arch:p is running",
-                    "arch:i is running",
-                    "arch:s is running",
-                    "arch:c is running",
-                ]
-                for pattern in arch_patterns:
-                    if pattern in recent_content:
-                        return True
-        except (OSError, IOError):
-            # Can't read transcript - assume not in arch context
-            pass
-
-    return False
-
-
 def truncate_content(content: str, max_length: int = MAX_LOG_ENTRY_SIZE) -> str:
     """Truncate content if too long, preserving information about truncation."""
     if len(content) <= max_length:
