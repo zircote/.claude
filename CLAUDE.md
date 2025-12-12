@@ -73,6 +73,10 @@ Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor 
   - Completed: 2025-12-12
   - Outcome: success
   - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, RETROSPECTIVE.md
+- `docs/architecture/completed/2025-12-12-git-fr-command/` - Git Workflow Commands Suite
+  - Completed: 2025-12-12
+  - Outcome: success
+  - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, RETROSPECTIVE.md
 
 ### Opus 4.5 Optimized
 
