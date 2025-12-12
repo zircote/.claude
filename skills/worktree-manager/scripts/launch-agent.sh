@@ -4,9 +4,9 @@
 # Usage: ./launch-agent.sh <worktree-path> [task-description] [--prompt "template"] [--headless]
 #
 # Prompt Modes:
-#   --prompt "template"            Interactive mode (default): shows suggested prompt in terminal,
-#                                  Claude starts normally, user copies/pastes prompt
-#   --prompt "template" --headless Headless mode: uses -p flag, auto-executes immediately
+#   --prompt "template"            Interactive mode (default): passes prompt as argument,
+#                                  Claude starts with prompt pre-filled in input (cc "prompt")
+#   --prompt "template" --headless Headless mode: uses -p flag, auto-executes immediately (cc -p "prompt")
 #
 # Examples:
 #   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth
@@ -126,21 +126,27 @@ substitute_template() {
 
 # Build Claude command with prompt support
 # - Headless mode (--headless): uses -p flag for auto-execution
-# - Interactive mode (default): just launches claude, prompt shown separately for user to copy
+# - Interactive mode (default): passes prompt as argument (pre-filled in input)
 build_claude_cmd() {
     local base_cmd="$1"
     local prompt="$2"
     local headless="$3"
 
-    if [ -n "$prompt" ] && [ "$headless" = "true" ]; then
+    if [ -n "$prompt" ]; then
         local substituted_prompt
         substituted_prompt=$(substitute_template "$prompt")
         # Escape single quotes for shell safety
         substituted_prompt="${substituted_prompt//\'/\'\\\'\'}"
-        # Headless mode: -p flag auto-executes and exits
-        echo "$base_cmd -p '$substituted_prompt'"
+
+        if [ "$headless" = "true" ]; then
+            # Headless mode: -p flag auto-executes and exits
+            echo "$base_cmd -p '$substituted_prompt'"
+        else
+            # Interactive mode: pass prompt as argument (pre-filled in Claude's input)
+            echo "$base_cmd '$substituted_prompt'"
+        fi
     else
-        # Interactive mode OR no prompt: just launch claude
+        # No prompt: just launch claude
         echo "$base_cmd"
     fi
 }
@@ -148,36 +154,21 @@ build_claude_cmd() {
 # Build final Claude command (with prompt if provided)
 FINAL_CLAUDE_CMD=$(build_claude_cmd "$CLAUDE_CMD" "$PROMPT_TEMPLATE" "$HEADLESS_MODE")
 
-# Build prompt display for interactive mode (shown in terminal, user can copy/paste)
-PROMPT_DISPLAY=""
-if [ -n "$PROMPT_TEMPLATE" ] && [ "$HEADLESS_MODE" != "true" ]; then
-    SUBSTITUTED_PROMPT=$(substitute_template "$PROMPT_TEMPLATE")
-    PROMPT_DISPLAY="echo 'Suggested prompt: $SUBSTITUTED_PROMPT'; echo ''"
-fi
-
 # Build the command to run in the new terminal
 # For fish: use 'and'/'or' instead of '&&'/'||'
 if [ "$SHELL_CMD" = "fish" ]; then
     if [ -n "$TASK" ]; then
-        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'; and echo 'Task: $TASK'"
+        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'; and echo 'Task: $TASK'; and echo ''; and $FINAL_CLAUDE_CMD"
     else
-        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'"
+        INNER_CMD="cd '$WORKTREE_PATH'; and echo 'Worktree: $PROJECT / $BRANCH'; and echo ''; and $FINAL_CLAUDE_CMD"
     fi
-    if [ -n "$PROMPT_DISPLAY" ]; then
-        INNER_CMD="$INNER_CMD; and $PROMPT_DISPLAY"
-    fi
-    INNER_CMD="$INNER_CMD; and echo ''; and $FINAL_CLAUDE_CMD"
 else
     # bash/zsh syntax
     if [ -n "$TASK" ]; then
-        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH' && echo 'Task: $TASK'"
+        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH' && echo 'Task: $TASK' && echo '' && $FINAL_CLAUDE_CMD"
     else
-        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH'"
+        INNER_CMD="cd '$WORKTREE_PATH' && echo 'Worktree: $PROJECT / $BRANCH' && echo '' && $FINAL_CLAUDE_CMD"
     fi
-    if [ -n "$PROMPT_DISPLAY" ]; then
-        INNER_CMD="$INNER_CMD && $PROMPT_DISPLAY"
-    fi
-    INNER_CMD="$INNER_CMD && echo '' && $FINAL_CLAUDE_CMD"
 fi
 
 # Launch based on terminal type

@@ -595,8 +595,8 @@ Launch Claude Code agents with a prompt that's ready when the instance starts. C
 
 | Mode | Flag | Behavior |
 |------|------|----------|
-| **Interactive** (default) | `--prompt "..."` | Shows prompt in terminal, user copies into Claude |
-| **Headless** | `--prompt "..." --headless` | Uses `-p` flag, auto-executes and exits |
+| **Interactive** (default) | `--prompt "..."` | Passes prompt as argument, pre-filled in Claude's input (`cc "prompt"`) |
+| **Headless** | `--prompt "..." --headless` | Uses `-p` flag, auto-executes and exits (`cc -p "prompt"`) |
 
 ### Syntax
 
@@ -633,19 +633,19 @@ spin up worktrees for auth, payments with prompt "/review-code" --headless
 1. User provides prompt template with optional `{{variable}}` placeholders
 2. `launch-agent.sh` substitutes variables with worktree-specific values
 3. Claude Code launches with prompt:
-   - **Interactive**: Prompt shown in terminal (user copies it)
-   - **Headless**: Uses `-p` flag for auto-execution
+   - **Interactive**: `cc "substituted-prompt"` - prompt pre-filled in input
+   - **Headless**: `cc -p "substituted-prompt"` - auto-executes and exits
 
 ### Batch Example
 
 ```
 User: "spin up worktrees for auth, payments with prompt 'analyze {{service}}'"
 
-Result (interactive mode): 2 Claude instances with suggested prompts shown:
-  - auth worktree:     Terminal shows "Suggested prompt: analyze auth"
-  - payments worktree: Terminal shows "Suggested prompt: analyze payments"
+Result (interactive mode): 2 Claude instances launched with prompts pre-filled:
+  - auth worktree:     `cc 'analyze auth'` - prompt ready in input
+  - payments worktree: `cc 'analyze payments'` - prompt ready in input
 
-With --headless: Uses -p flag, auto-executes immediately (claude -p 'analyze auth')
+With --headless: Uses -p flag, auto-executes immediately (`cc -p 'analyze auth'`)
 ```
 
 ### Valid Prompt Types
@@ -704,8 +704,8 @@ Scripts are in `~/.claude/skills/worktree-manager/scripts/`
 # Opens new terminal window (uses config.json terminal setting) with Claude Code
 #
 # Prompt Modes:
-#   --prompt "template"            Interactive (default): shows prompt in terminal
-#   --prompt "template" --headless Headless: uses -p flag, auto-executes and exits
+#   --prompt "template"            Interactive (default): passes prompt as argument (cc "prompt")
+#   --prompt "template" --headless Headless: uses -p flag, auto-executes (cc -p "prompt")
 #
 # Template Variables:
 #   {{service}}       - Branch slug (e.g., "feature-auth")
