@@ -272,11 +272,17 @@ before proceeding. Only continue after user acknowledges.
    - Requirements elicitation begun
    ```
 
-5. **Check for Collisions**:
+5. **Enable Prompt Logging**:
+   ```bash
+   touch docs/architecture/active/[YYYY-MM-DD]-[slug]/.prompt-log-enabled
+   ```
+   This enables automatic capture of all user prompts for retrospective analysis.
+
+6. **Check for Collisions**:
    - Scan `docs/architecture/` for similar project names
    - If potential collision found, ask user to confirm or differentiate
 
-6. **Update CLAUDE.md** (if exists):
+7. **Update CLAUDE.md** (if exists):
    - Add entry to "Active Architecture Projects" section
    - Create section if it doesn't exist
 
@@ -1131,6 +1137,9 @@ mkdir -p "docs/architecture/active/${DATE}-${SLUG}"
 
 # Initialize README.md with metadata
 # Initialize CHANGELOG.md with creation entry
+
+# Enable prompt logging for retrospective analysis
+touch "docs/architecture/active/${DATE}-${SLUG}/.prompt-log-enabled"
 ```
 
 ### Step 2: Begin Socratic Questioning
