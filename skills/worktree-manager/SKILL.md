@@ -69,6 +69,7 @@ tmux new-session -d -s "wt-$SLUG" -c "$WORKTREE_PATH" "$SHELL -c '$CLAUDE_COMMAN
 **Trigger phrases:**
 - "spin up worktrees for X, Y, Z"
 - "spin up worktrees for X, Y, Z with prompt '...'"
+- "spin up worktrees for X, Y, Z with prompt '...' --headless"
 - "create 3 worktrees for features A, B, C"
 - "new worktree for feature/auth"
 - "new worktree for feature/auth with prompt '...'"
@@ -78,6 +79,7 @@ tmux new-session -d -s "wt-$SLUG" -c "$WORKTREE_PATH" "$SHELL -c '$CLAUDE_COMMAN
 - "clean up the auth worktree"
 - "launch agent in worktree X"
 - "launch agent in worktree X with prompt '...'"
+- "launch agent in worktree X with prompt '...' --headless"
 
 ---
 
@@ -377,19 +379,16 @@ For EACH branch (can run in parallel):
    Option B (manual): Update ~/.claude/worktree-registry.json with jq
 
 8. LAUNCH AGENT (USE CONFIG VALUES FROM STEP 0!)
-   Option A (script with prompt):
+   Option A (script with interactive prompt - default):
      ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "task" --prompt "template"
-   Option B (script without prompt):
+   Option B (script with headless prompt - auto-executes):
+     ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "task" --prompt "template" --headless
+   Option C (script without prompt):
      ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "task"
-   Option C (manual with prompt): Substitute template vars, append -p flag:
+   Option D (manual): Substitute template vars, choose mode:
       SUBSTITUTED=$(echo "$PROMPT" | sed "s/{{service}}/$BRANCH_SLUG/g; s/{{branch}}/$BRANCH/g; s/{{project}}/$PROJECT/g")
-      - iterm2: osascript to create window, write "cd $PATH && $CLAUDE_CMD -p '$SUBSTITUTED'"
-      - ghostty: open -na "Ghostty.app" --args -e $SHELL -c "cd $PATH && $CLAUDE_CMD -p '$SUBSTITUTED'"
-      - tmux: tmux new-session -d -s "name" -c "$PATH" "$CLAUDE_CMD -p '$SUBSTITUTED'"
-   Option D (manual without prompt): Use $TERMINAL and $CLAUDE_CMD from config:
-      - iterm2: osascript to create window, write "cd $PATH && $CLAUDE_CMD"
-      - ghostty: open -na "Ghostty.app" --args -e $SHELL -c "cd $PATH && $CLAUDE_CMD"
-      - tmux: tmux new-session -d -s "name" -c "$PATH" "$CLAUDE_CMD"
+      Interactive: $CLAUDE_CMD '$SUBSTITUTED'
+      Headless:    $CLAUDE_CMD -p '$SUBSTITUTED'
    ⚠️ NEVER hardcode terminal app or claude command - ALWAYS use config values!
    ⚠️ When user provides a prompt template, ALWAYS substitute variables before launching
 
@@ -588,21 +587,33 @@ You:
 
 ---
 
-## Initial Prompts (Auto-Execute)
+## Initial Prompts
 
-Launch Claude Code agents with a prompt that runs immediately when the instance starts. Perfect for automating tasks across multiple worktrees.
+Launch Claude Code agents with a prompt that's ready when the instance starts. Choose interactive or headless mode.
+
+### Prompt Modes
+
+| Mode | Flag | Behavior |
+|------|------|----------|
+| **Interactive** (default) | `--prompt "..."` | Pre-fills prompt, user can edit and confirm |
+| **Headless** | `--prompt "..." --headless` | Uses `-p` flag, auto-executes and exits |
 
 ### Syntax
 
-Add `--prompt "template"` when calling `launch-agent.sh`:
-
+Interactive (default):
 ```bash
 ~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "$TASK" --prompt "template"
 ```
 
+Headless (auto-execute):
+```bash
+~/.claude/skills/worktree-manager/scripts/launch-agent.sh $WORKTREE_PATH "$TASK" --prompt "template" --headless
+```
+
 Or in natural language:
 ```
-spin up worktrees for auth, payments, users with prompt "run tests for {{service}}"
+spin up worktrees for auth, payments with prompt "run tests for {{service}}"
+spin up worktrees for auth, payments with prompt "/review-code" --headless
 ```
 
 ### Template Variables
@@ -621,22 +632,25 @@ spin up worktrees for auth, payments, users with prompt "run tests for {{service
 
 1. User provides prompt template with optional `{{variable}}` placeholders
 2. `launch-agent.sh` substitutes variables with worktree-specific values
-3. Claude Code launches with `-p` flag for headless auto-execution
-4. The prompt runs immediately—no user interaction required
+3. Claude Code launches with prompt:
+   - **Interactive**: Prompt passed as argument (pre-fills input)
+   - **Headless**: Uses `-p` flag for auto-execution
 
 ### Batch Example
 
 ```
-User: "spin up worktrees for auth, payments with prompt 'analyze {{service}} for security issues'"
+User: "spin up worktrees for auth, payments with prompt 'analyze {{service}}'"
 
-Result: 2 Claude instances launch:
-  - auth worktree:     claude ... -p 'analyze auth for security issues'
-  - payments worktree: claude ... -p 'analyze payments for security issues'
+Result (interactive mode): 2 Claude instances with pre-filled prompts:
+  - auth worktree:     claude ... 'analyze auth'
+  - payments worktree: claude ... 'analyze payments'
+
+With --headless: Uses -p flag instead, auto-executes immediately
 ```
 
 ### Valid Prompt Types
 
-- Slash commands: `"/review-code"`, `"/deep-research auth flow"`
+- Slash commands: `"/explore"`, `"/review-code"`, `"/deep-research auth flow"`
 - Natural language: `"fix all TypeScript errors"`, `"refactor {{service}} for performance"`
 - Multi-line instructions (escape newlines or use slash commands)
 
@@ -686,9 +700,12 @@ Scripts are in `~/.claude/skills/worktree-manager/scripts/`
 
 ### launch-agent.sh
 ```bash
-~/.claude/skills/worktree-manager/scripts/launch-agent.sh <worktree-path> [task] [--prompt "template"]
+~/.claude/skills/worktree-manager/scripts/launch-agent.sh <worktree-path> [task] [--prompt "template"] [--headless]
 # Opens new terminal window (uses config.json terminal setting) with Claude Code
-# Optional: --prompt passes a template that gets variable-substituted and auto-executed via -p flag
+#
+# Prompt Modes:
+#   --prompt "template"            Interactive (default): pre-fills prompt, user confirms
+#   --prompt "template" --headless Headless: uses -p flag, auto-executes and exits
 #
 # Template Variables:
 #   {{service}}       - Branch slug (e.g., "feature-auth")
@@ -700,9 +717,10 @@ Scripts are in `~/.claude/skills/worktree-manager/scripts/`
 #   {{port}}          - First allocated port
 #
 # Examples:
-#   launch-agent.sh ~/Projects/worktrees/proj/auth-service "Optimize service"
-#   launch-agent.sh ~/Projects/worktrees/proj/auth-service "" --prompt "/review-code"
-#   launch-agent.sh ~/Projects/worktrees/proj/auth "" --prompt "analyze {{service}} performance"
+#   launch-agent.sh ~/Projects/worktrees/proj/auth "Optimize"
+#   launch-agent.sh ~/Projects/worktrees/proj/auth "" --prompt "/explore"
+#   launch-agent.sh ~/Projects/worktrees/proj/auth "" --prompt "/review-code" --headless
+#   launch-agent.sh ~/Projects/worktrees/proj/auth "" --prompt "analyze {{service}}"
 ```
 
 ### status.sh

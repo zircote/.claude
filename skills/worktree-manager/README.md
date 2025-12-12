@@ -78,9 +78,16 @@ The skill activates automatically when you mention worktrees:
 - "What's the status of my worktrees?"
 - "Clean up the auth worktree"
 
-## Initial Prompts (Auto-Execute)
+## Initial Prompts
 
-Launch Claude Code agents with a prompt that runs immediately when the instance starts. Perfect for automating repetitive tasks across multiple worktrees.
+Launch Claude Code agents with a prompt that's ready to go when the instance starts. Choose between interactive mode (default) or headless mode.
+
+### Prompt Modes
+
+| Mode | Syntax | Behavior |
+|------|--------|----------|
+| **Interactive** (default) | `with prompt "..."` | Prompt is pre-filled, you can edit and press Enter |
+| **Headless** | `with prompt "..." --headless` | Auto-executes immediately, runs and exits |
 
 ### Basic Syntax
 
@@ -88,6 +95,11 @@ Add `with prompt "your prompt here"` to any worktree creation command:
 
 ```
 spin up worktrees for feature/auth, feature/payments with prompt "run all tests"
+```
+
+For headless (auto-execute) mode, add `--headless`:
+```
+spin up worktrees for auth, payments with prompt "/review-code" --headless
 ```
 
 ### Template Variables
@@ -135,8 +147,9 @@ spin up worktrees for auth, billing with prompt "refactor {{service}} to use the
 
 1. You provide a prompt template with optional `{{variable}}` placeholders
 2. For each worktree, variables are replaced with that worktree's values
-3. Claude Code launches with the `-p` flag for headless auto-execution
-4. The prompt runs immediately—no user interaction required
+3. Claude Code launches with your prompt:
+   - **Interactive** (default): Prompt is passed as argument, pre-fills the input field
+   - **Headless** (`--headless`): Uses `-p` flag, auto-executes immediately
 
 ### Tips
 
@@ -150,24 +163,27 @@ spin up worktrees for auth, billing with prompt "refactor {{service}} to use the
 You can also use the launch script directly:
 
 ```bash
-# With task only (no auto-execute)
+# No prompt
 ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Implement OAuth"
 
-# With prompt (auto-executes)
-./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/review-code"
+# Interactive prompt (pre-fills input, default)
+./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/explore"
 
-# With both task and prompt
-./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Optimize auth" --prompt "analyze {{service}} performance"
+# Headless prompt (auto-executes and exits)
+./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/review-code" --headless
+
+# With task and interactive prompt
+./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Optimize auth" --prompt "analyze {{service}}"
 ```
 
 ### Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Prompt not executing | Ensure `claudeCommand` in config.json doesn't already include `-p` |
+| Prompt not pre-filling | Ensure `claudeCommand` in config.json doesn't already include `-p` |
 | Variables not substituting | Check spelling: `{{service}}` not `{service}` or `{{ service }}` |
 | Quotes breaking command | Escape inner quotes or use alternate quote style |
-| Claude exits immediately | This is expected with `-p` flag—it runs headless and exits |
+| Claude exits immediately | Expected with `--headless`; use interactive mode (default) to stay open |
 
 ## Requirements
 

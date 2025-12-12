@@ -1,13 +1,19 @@
 #!/bin/bash
 # launch-agent.sh - Launch Claude Code in a new terminal for a worktree
 #
-# Usage: ./launch-agent.sh <worktree-path> [task-description] [--prompt "template"]
+# Usage: ./launch-agent.sh <worktree-path> [task-description] [--prompt "template"] [--headless]
+#
+# Prompt Modes:
+#   --prompt "template"            Interactive mode (default): prompt is passed as argument,
+#                                  Claude starts with prompt pre-filled, user can edit/confirm
+#   --prompt "template" --headless Headless mode: uses -p flag, auto-executes and exits
 #
 # Examples:
 #   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth
 #   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Implement OAuth login"
-#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/review-code"
-#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Optimize" --prompt "analyze {{service}} performance"
+#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/explore"
+#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "" --prompt "/review-code" --headless
+#   ./launch-agent.sh ~/Projects/worktrees/my-project/feature-auth "Optimize" --prompt "analyze {{service}}"
 #
 # Template Variables (for --prompt):
 #   {{service}}       - Branch slug (e.g., "feature-auth")
@@ -23,14 +29,19 @@ set -e
 WORKTREE_PATH="$1"
 TASK="$2"
 PROMPT_TEMPLATE=""
+HEADLESS_MODE=false
 
-# Parse optional --prompt argument after positional args
+# Parse optional arguments after positional args
 shift 2 2>/dev/null || shift $# 2>/dev/null
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --prompt|-p)
+        --prompt)
             PROMPT_TEMPLATE="$2"
             shift 2
+            ;;
+        --headless|-p)
+            HEADLESS_MODE=true
+            shift
             ;;
         *)
             shift
@@ -113,24 +124,34 @@ substitute_template() {
     echo "$template"
 }
 
-# Build Claude command with optional -p flag for auto-execution
+# Build Claude command with prompt support
+# - Headless mode (--headless): uses -p flag for auto-execution
+# - Interactive mode (default): passes prompt as argument, pre-fills input
 build_claude_cmd() {
     local base_cmd="$1"
     local prompt="$2"
+    local headless="$3"
 
     if [ -n "$prompt" ]; then
         local substituted_prompt
         substituted_prompt=$(substitute_template "$prompt")
         # Escape single quotes for shell safety
         substituted_prompt="${substituted_prompt//\'/\'\\\'\'}"
-        echo "$base_cmd -p '$substituted_prompt'"
+
+        if [ "$headless" = "true" ]; then
+            # Headless mode: -p flag auto-executes and exits
+            echo "$base_cmd -p '$substituted_prompt'"
+        else
+            # Interactive mode: pass prompt as argument (pre-fills input)
+            echo "$base_cmd '$substituted_prompt'"
+        fi
     else
         echo "$base_cmd"
     fi
 }
 
 # Build final Claude command (with prompt if provided)
-FINAL_CLAUDE_CMD=$(build_claude_cmd "$CLAUDE_CMD" "$PROMPT_TEMPLATE")
+FINAL_CLAUDE_CMD=$(build_claude_cmd "$CLAUDE_CMD" "$PROMPT_TEMPLATE" "$HEADLESS_MODE")
 
 # Build the command to run in the new terminal
 # For fish: use 'and'/'or' instead of '&&'/'||'
@@ -221,5 +242,9 @@ if [ -n "$TASK" ]; then
     echo "   Task: $TASK"
 fi
 if [ -n "$PROMPT_TEMPLATE" ]; then
-    echo "   Prompt: $(substitute_template "$PROMPT_TEMPLATE")"
+    if [ "$HEADLESS_MODE" = "true" ]; then
+        echo "   Prompt: $(substitute_template "$PROMPT_TEMPLATE") (headless)"
+    else
+        echo "   Prompt: $(substitute_template "$PROMPT_TEMPLATE") (interactive)"
+    fi
 fi
