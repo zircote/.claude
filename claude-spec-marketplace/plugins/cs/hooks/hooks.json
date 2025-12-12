@@ -1,0 +1,16 @@
+{
+  "description": "Prompt capture for claude-spec projects",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/prompt_capture.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

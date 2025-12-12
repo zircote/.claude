@@ -1,0 +1,15 @@
+{
+  "terminal": "iterm2",
+  "shell": "bash",
+  "claudeCommand": "cc",
+  "portPool": {
+    "start": 8100,
+    "end": 8199
+  },
+  "portsPerWorktree": 2,
+  "worktreeBase": "~/Projects/worktrees",
+  "registryPath": "~/.claude/worktree-registry.json",
+  "defaultCopyDirs": [".agents", ".env.example", ".env"],
+  "healthCheckTimeout": 30,
+  "healthCheckRetries": 6
+}

@@ -1,0 +1,17 @@
+{
+  "name": "cs",
+  "version": "1.0.0",
+  "description": "Project specification and implementation lifecycle management with worktree automation and prompt capture",
+  "author": {
+    "name": "Claude Spec Contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "architecture",
+    "planning",
+    "specification",
+    "worktree",
+    "prompt-capture",
+    "implementation-tracking"
+  ]
+}
