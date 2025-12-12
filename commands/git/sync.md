@@ -1,5 +1,5 @@
 ---
-description: Full sync - fetch, rebase onto remote branch, and push.
+description: Full sync - fetch, rebase onto remote branch, and push
 argument-hint: "[remote] [branch]"
 ---
 
