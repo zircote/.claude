@@ -45,19 +45,25 @@ When working in these environments, read and follow the corresponding file:
 | `/git:ff [remote] [branch]` | Fast-forward merge only (no rebase, no merge commits) |
 | `/git:prune [--force]` | Clean up stale local branches (dry-run by default) |
 
-### Architecture Planning (`/arch`)
+### Architecture Planning (`/cs` plugin)
+
+**Requires**: Install `cs` plugin via `/plugin` → `./claude-spec-marketplace`
 
 | Command | Description |
 |---------|-------------|
-| `/arch:p <project-idea>` | Strategic project planner with Socratic requirements elicitation, PRD, and implementation plan |
-| `/arch:i [project-id\|project-slug]` | Implementation progress tracker with PROGRESS.md checkpoint file, task tracking, and document sync |
-| `/arch:s [project-id\|--list\|--expired]` | Project status, portfolio listing, find expired plans |
-| `/arch:c <project-path\|project-id>` | Close out completed project, archive artifacts, generate retrospective |
-| `/arch:log <on\|off\|status\|show>` | Toggle prompt capture logging for architecture work |
+| `/cs:p <project-idea>` | Strategic project planner with Socratic requirements elicitation, PRD, and implementation plan |
+| `/cs:i [project-id\|project-slug]` | Implementation progress tracker with PROGRESS.md checkpoint file, task tracking, and document sync |
+| `/cs:s [project-id\|--list\|--expired]` | Project status, portfolio listing, find expired plans |
+| `/cs:c <project-path\|project-id>` | Close out completed project, archive artifacts, generate retrospective |
+| `/cs:log <on\|off\|status\|show>` | Toggle prompt capture logging for architecture work |
+| `/cs:migrate` | Migrate projects from `docs/architecture/` to `docs/spec/` |
+| `/cs:wt:create` | Create git worktree with Claude agent |
+| `/cs:wt:status` | Show worktree status |
+| `/cs:wt:cleanup` | Clean up worktrees |
 
-Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor → `/arch:c` to complete
+Workflow: `/cs:p` to plan → `/cs:i` to implement → `/cs:s` to monitor → `/cs:c` to complete
 
-**PROGRESS.md Checkpoint System**: The `/arch:i` command creates and maintains a PROGRESS.md file in the project directory that:
+**PROGRESS.md Checkpoint System**: The `/cs:i` command creates and maintains a PROGRESS.md file in the project directory that:
 - Tracks task status (pending/in-progress/done/skipped) with timestamps
 - Calculates phase and project progress automatically
 - Logs divergences from the original plan
@@ -89,28 +95,25 @@ Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor 
 
 ## Prompt Capture Hook
 
-Logs prompts during `/arch:*` sessions for traceability and retrospective analysis.
+Logs prompts during `/cs:*` sessions for traceability and retrospective analysis. Part of the `cs` plugin.
 
-- **Enable**: `/arch:log on` | **Disable**: `/arch:log off` | **Status**: `/arch:log status`
-- **Auto-analysis**: On `/arch:c`, generates Interaction Analysis for retrospective
-- **Install/Re-enable after hookify update**: `~/.claude/hooks/install.sh` or `cp -r ~/.claude/patches/hookify-0.1.0/* ~/.claude/plugins/cache/claude-code-plugins/hookify/0.1.0/`
-- **Full documentation**: See [`hooks/README.md`](hooks/README.md)
+- **Enable**: `/cs:log on` | **Disable**: `/cs:log off` | **Status**: `/cs:log status`
+- **Auto-analysis**: On `/cs:c`, generates Interaction Analysis for retrospective
 
 ---
 
 ## Git Worktree Management
 
-**Always use the `worktree-manager` skill** for ALL git worktree operations. This is the ONLY approved method.
+**Use the `cs` plugin** for worktree operations: `/cs:wt:create`, `/cs:wt:status`, `/cs:wt:cleanup`
 
-Trigger phrases: "create worktree", "spin up worktrees", "worktree status", "cleanup worktrees"
+Or use trigger phrases with the `worktree-manager` skill (included in `cs` plugin):
+- "create worktree", "spin up worktrees", "worktree status", "cleanup worktrees"
 
 **Initial prompt support**: Add `with prompt "template"` to auto-execute tasks in each worktree:
 ```
 spin up worktrees for auth, payments with prompt "run tests for {{service}}"
 ```
 Template variables: `{{service}}`, `{{branch}}`, `{{project}}`, `{{port}}`, `{{ports}}`
-
-**DO NOT** use raw `git worktree` commands directly or create ad-hoc worktree workflows.
 
 ### Worktree Directory Discipline
 
@@ -120,20 +123,6 @@ Before creating/editing files, verify your working directory:
 1. Check `cwd` from session context or run `pwd`
 2. If in a worktree (e.g., `/Users/.../worktrees/.claude/feature-branch/`), ALL writes go there
 3. If in source root (e.g., `~/.claude/`), switch to the worktree or confirm with user
-
-**Anti-pattern** (causes PRs to miss files):
-```
-# Working in worktree but writing to source
-cwd: /Users/x/worktrees/.claude/my-feature/
-Write to: ~/.claude/hooks/new_hook.py  ❌ WRONG
-```
-
-**Correct pattern**:
-```
-# Write to the worktree path
-cwd: /Users/x/worktrees/.claude/my-feature/
-Write to: /Users/x/worktrees/.claude/my-feature/hooks/new_hook.py  ✅ CORRECT
-```
 
 If files were created in the wrong location, copy them to the worktree before committing.
 
