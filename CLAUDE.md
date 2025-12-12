@@ -104,6 +104,31 @@ Template variables: `{{service}}`, `{{branch}}`, `{{project}}`, `{{port}}`, `{{p
 
 **DO NOT** use raw `git worktree` commands directly or create ad-hoc worktree workflows.
 
+### Worktree Directory Discipline
+
+**CRITICAL**: When working in a worktree, ALL file operations MUST target the worktree path, not the source repository.
+
+Before creating/editing files, verify your working directory:
+1. Check `cwd` from session context or run `pwd`
+2. If in a worktree (e.g., `/Users/.../worktrees/.claude/feature-branch/`), ALL writes go there
+3. If in source root (e.g., `~/.claude/`), switch to the worktree or confirm with user
+
+**Anti-pattern** (causes PRs to miss files):
+```
+# Working in worktree but writing to source
+cwd: /Users/x/worktrees/.claude/my-feature/
+Write to: ~/.claude/hooks/new_hook.py  ❌ WRONG
+```
+
+**Correct pattern**:
+```
+# Write to the worktree path
+cwd: /Users/x/worktrees/.claude/my-feature/
+Write to: /Users/x/worktrees/.claude/my-feature/hooks/new_hook.py  ✅ CORRECT
+```
+
+If files were created in the wrong location, copy them to the worktree before committing.
+
 ## Plugin Maintenance
 
 Plugin patches are stored in `~/.claude/patches/`. After plugin updates, reapply patches:
