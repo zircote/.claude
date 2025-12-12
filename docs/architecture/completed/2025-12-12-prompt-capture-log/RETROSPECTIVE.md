@@ -62,6 +62,7 @@ completed: 2025-12-12T23:35:00Z
 - **Progressive implementation**: Foundation → Core → Integration → Polish sequence allowed testing at each layer
 - **Test suite value**: Writing tests exposed edge cases early (e.g., password pattern requiring quotes)
 - **Documentation importance**: Updating CLAUDE.md immediately ensures the feature is discoverable and usable
+- **Worktree discipline needed**: Much of the implementation occurred in `~/.claude/` (source root) instead of the worktree branch, causing the PR to initially miss implementation files. Required manual copy to worktree before commit. Future work should ensure implementation happens in the correct worktree from the start.
 
 ### Planning Accuracy
 

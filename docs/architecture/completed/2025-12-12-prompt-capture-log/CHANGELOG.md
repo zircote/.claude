@@ -69,5 +69,6 @@
 ### Retrospective Summary
 - What went well: Clear planning, fast execution, good test coverage (44 tests)
 - What to improve: Hooks integration feels brittle (patching process, file path dependencies) - needs real-world testing
+- Process issue: Implementation occurred in ~/.claude/ (source root) instead of worktree, required manual file copy to PR branch
 - Key achievement: Meta-feature that improves architecture workflow with data-driven retrospective insights
 - User assessment: Core functionality delivered, but hooks process robustness TBD
