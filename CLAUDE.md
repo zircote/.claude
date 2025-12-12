@@ -49,8 +49,16 @@ When working in these environments, read and follow the corresponding file:
 | `/arch:i [project-id\|project-slug]` | Implementation progress tracker with PROGRESS.md checkpoint file, task tracking, and document sync |
 | `/arch:s [project-id\|--list\|--expired]` | Project status, portfolio listing, find expired plans |
 | `/arch:c <project-path\|project-id>` | Close out completed project, archive artifacts, generate retrospective |
+| `/arch:log <on\|off\|status\|show>` | Toggle prompt capture logging for architecture work |
 
 Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor → `/arch:c` to complete
+
+**Prompt Capture Logging**: When enabled, captures all prompts during `/arch:*` sessions:
+- Toggle with `/arch:log on` or `/arch:log off`
+- Logs stored in `PROMPT_LOG.json` within project directory
+- Content filtered for profanity and secrets before logging
+- Auto-analyzed at `/arch:c` and included in RETROSPECTIVE.md
+- Auto-disabled when project is closed out
 
 **PROGRESS.md Checkpoint System**: The `/arch:i` command creates and maintains a PROGRESS.md file in the project directory that:
 - Tracks task status (pending/in-progress/done/skipped) with timestamps
@@ -60,6 +68,10 @@ Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor 
 - Persists state across Claude sessions
 
 **Completed Architecture Projects**:
+- `docs/architecture/completed/2025-12-12-prompt-capture-log/` - Prompt Capture Log
+  - Completed: 2025-12-12
+  - Outcome: success
+  - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, RETROSPECTIVE.md
 - `docs/architecture/completed/2025-12-12-arch-lifecycle-automation/` - Architecture Lifecycle Automation
   - Completed: 2025-12-12
   - Outcome: success
