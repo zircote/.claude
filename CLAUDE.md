@@ -63,7 +63,7 @@ Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor 
 **Completed Architecture Projects**:
 - `docs/architecture/completed/2025-12-12-prompt-capture-log/` - Prompt Capture Log
   - Completed: 2025-12-12
-  - Outcome: success
+  - Outcome: partial (hooks integration needs real-world validation)
   - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, RETROSPECTIVE.md
 - `docs/architecture/completed/2025-12-12-arch-lifecycle-automation/` - Architecture Lifecycle Automation
   - Completed: 2025-12-12
