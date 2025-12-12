@@ -59,6 +59,12 @@ Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor 
 - Syncs state to IMPLEMENTATION_PLAN.md checkboxes and README.md frontmatter
 - Persists state across Claude sessions
 
+**Completed Architecture Projects**:
+- `docs/architecture/completed/2025-12-12-arch-lifecycle-automation/` - Architecture Lifecycle Automation
+  - Completed: 2025-12-12
+  - Outcome: success
+  - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, RETROSPECTIVE.md
+
 ### Opus 4.5 Optimized
 
 | Command | Description |
