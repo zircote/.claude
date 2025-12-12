@@ -2,8 +2,14 @@
 """
 Prompt Capture Hook for Claude Code
 
-This hook intercepts UserPromptSubmit events during /arch:* sessions,
+This hook intercepts ALL UserPromptSubmit events when logging is enabled,
 filters sensitive content, and logs prompts to PROMPT_LOG.json.
+
+Logging is controlled by:
+- Enable: /arch:p (auto-enables) OR /arch:log on (creates .prompt-log-enabled marker)
+- Disable: /arch:log off OR /arch:c (removes marker)
+
+When enabled, ALL user input is logged until disabled.
 
 Usage:
     Registered as a UserPromptSubmit hook in Claude Code.
@@ -229,13 +235,8 @@ def main() -> None:
     if len(user_prompt) > MAX_PROMPT_LENGTH:
         user_prompt = truncate_content(user_prompt, MAX_PROMPT_LENGTH)
 
-    # Check if logging is enabled
+    # Check if logging is enabled (only gate - log ALL input when enabled)
     if not is_logging_enabled(cwd):
-        write_output(pass_through())
-        return
-
-    # Check if we're in an /arch:* context
-    if not is_arch_context(input_data):
         write_output(pass_through())
         return
 
