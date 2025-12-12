@@ -14,7 +14,13 @@ Changed all hook scripts to derive the plugin path from `__file__` instead of re
 - `hooks/posttooluse.py`
 - `hooks/stop.py`
 - `hooks/userpromptsubmit.py`
+- `hooks/hooks.json` - Added prompt_capture_hook to UserPromptSubmit chain
 - `core/rule_engine.py`
+
+## Prompt Capture Hook Addition (2025-12-12)
+Added `~/.claude/hooks/prompt_capture_hook.py` to the UserPromptSubmit hook chain.
+This hook captures prompts during /arch:* sessions for retrospective analysis.
+See: ARCH-2025-12-12-002 (Prompt Capture Log)
 
 ## To Restore After Plugin Update
 ```bash
