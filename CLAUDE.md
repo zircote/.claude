@@ -49,6 +49,7 @@ When working in these environments, read and follow the corresponding file:
 | `/arch:i [project-id\|project-slug]` | Implementation progress tracker with PROGRESS.md checkpoint file, task tracking, and document sync |
 | `/arch:s [project-id\|--list\|--expired]` | Project status, portfolio listing, find expired plans |
 | `/arch:c <project-path\|project-id>` | Close out completed project, archive artifacts, generate retrospective |
+| `/arch:log <on\|off\|status\|show>` | Toggle prompt capture logging for architecture work |
 
 Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor → `/arch:c` to complete
 
@@ -60,6 +61,10 @@ Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor 
 - Persists state across Claude sessions
 
 **Completed Architecture Projects**:
+- `docs/architecture/completed/2025-12-12-prompt-capture-log/` - Prompt Capture Log
+  - Completed: 2025-12-12
+  - Outcome: partial (hooks integration needs real-world validation)
+  - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, RETROSPECTIVE.md
 - `docs/architecture/completed/2025-12-12-arch-lifecycle-automation/` - Architecture Lifecycle Automation
   - Completed: 2025-12-12
   - Outcome: success
@@ -71,6 +76,19 @@ Workflow: `/arch:p` to plan → `/arch:i` to implement → `/arch:s` to monitor 
 |---------|-------------|
 | `/explore <path\|pattern\|question>` | Exhaustive codebase exploration with parallel subagents and anti-hallucination enforcement |
 | `/deep-research <topic\|url>` | Multi-phase research protocol with structured deliverables and quality gates |
+
+---
+
+## Prompt Capture Hook
+
+Logs prompts during `/arch:*` sessions for traceability and retrospective analysis.
+
+- **Enable**: `/arch:log on` | **Disable**: `/arch:log off` | **Status**: `/arch:log status`
+- **Auto-analysis**: On `/arch:c`, generates Interaction Analysis for retrospective
+- **Install/Re-enable after hookify update**: `~/.claude/hooks/install.sh` or `cp -r ~/.claude/patches/hookify-0.1.0/* ~/.claude/plugins/cache/claude-code-plugins/hookify/0.1.0/`
+- **Full documentation**: See [`hooks/README.md`](hooks/README.md)
+
+---
 
 ## Git Worktree Management
 
@@ -85,6 +103,31 @@ spin up worktrees for auth, payments with prompt "run tests for {{service}}"
 Template variables: `{{service}}`, `{{branch}}`, `{{project}}`, `{{port}}`, `{{ports}}`
 
 **DO NOT** use raw `git worktree` commands directly or create ad-hoc worktree workflows.
+
+### Worktree Directory Discipline
+
+**CRITICAL**: When working in a worktree, ALL file operations MUST target the worktree path, not the source repository.
+
+Before creating/editing files, verify your working directory:
+1. Check `cwd` from session context or run `pwd`
+2. If in a worktree (e.g., `/Users/.../worktrees/.claude/feature-branch/`), ALL writes go there
+3. If in source root (e.g., `~/.claude/`), switch to the worktree or confirm with user
+
+**Anti-pattern** (causes PRs to miss files):
+```
+# Working in worktree but writing to source
+cwd: /Users/x/worktrees/.claude/my-feature/
+Write to: ~/.claude/hooks/new_hook.py  ❌ WRONG
+```
+
+**Correct pattern**:
+```
+# Write to the worktree path
+cwd: /Users/x/worktrees/.claude/my-feature/
+Write to: /Users/x/worktrees/.claude/my-feature/hooks/new_hook.py  ✅ CORRECT
+```
+
+If files were created in the wrong location, copy them to the worktree before committing.
 
 ## Plugin Maintenance
 

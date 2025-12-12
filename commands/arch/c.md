@@ -45,7 +45,25 @@ Ask the user:
 4. **Key Learnings**: What would you do differently?
 5. **Stakeholder Satisfaction**: How satisfied are stakeholders with the outcome?
 
-## Step 3: Generate RETROSPECTIVE.md
+## Step 3: Analyze Prompt Logs (If Available)
+
+Before generating the retrospective, check for and analyze prompt capture logs:
+
+```bash
+# Check if prompt logging was enabled
+if [ -f "${PROJECT_PATH}/.prompt-log-enabled" ]; then
+    echo "📝 Prompt logging was enabled - analyzing interaction patterns..."
+
+    # Run analyzer and capture output
+    INTERACTION_ANALYSIS=$(python3 ~/.claude/hooks/analyzers/analyze_cli.py "${PROJECT_PATH}" 2>/dev/null)
+
+    # Disable logging (remove marker)
+    rm -f "${PROJECT_PATH}/.prompt-log-enabled"
+    echo "✓ Prompt logging disabled"
+fi
+```
+
+## Step 4: Generate RETROSPECTIVE.md
 
 Create `${PROJECT_PATH}/RETROSPECTIVE.md`:
 
@@ -104,11 +122,20 @@ completed: ${TIMESTAMP}
 - [Recommendation 1]
 - [Recommendation 2]
 
+${INTERACTION_ANALYSIS}
+
 ## Final Notes
 [Any other relevant observations]
 ```
 
-## Step 4: Update Document Metadata
+**IMPORTANT**: If `${INTERACTION_ANALYSIS}` was captured in Step 3, include it in the retrospective. The Interaction Analysis section provides:
+- Metrics on prompts, sessions, and questions asked
+- Commands used during the project
+- Content filtering statistics (if any)
+- AI-generated insights on interaction patterns
+- Recommendations for future projects based on prompting behavior
+
+## Step 5: Update Document Metadata
 
 Update `README.md` frontmatter:
 
@@ -121,7 +148,7 @@ outcome: success | partial | failed
 ---
 ```
 
-## Step 5: Final CHANGELOG Entry
+## Step 6: Final CHANGELOG Entry
 
 Append to `CHANGELOG.md`:
 
@@ -138,7 +165,7 @@ Append to `CHANGELOG.md`:
 - What to improve: [brief summary]
 ```
 
-## Step 6: Move to Completed
+## Step 7: Move to Completed
 
 ```bash
 # Move project to completed directory
@@ -148,7 +175,7 @@ mv docs/architecture/active/${PROJECT_FOLDER} docs/architecture/completed/
 ls docs/architecture/completed/${PROJECT_FOLDER}
 ```
 
-## Step 7: Update CLAUDE.md
+## Step 8: Update CLAUDE.md
 
 If CLAUDE.md exists, update it:
 
@@ -162,7 +189,7 @@ If CLAUDE.md exists, update it:
 
 Remove from "Active Architecture Projects" section.
 
-## Step 8: Generate Summary
+## Step 9: Generate Summary
 
 Provide user with:
 
@@ -188,6 +215,17 @@ Provide user with:
 
 The planning artifacts are preserved for future reference.
 ```
+
+If prompt logging was enabled, also include:
+```
+📊 Interaction Analysis:
+   - Prompts captured: [N]
+   - Sessions: [N]
+   - Analysis included in RETROSPECTIVE.md
+   - PROMPT_LOG.json preserved in archive
+```
+
+**Note**: The PROMPT_LOG.json file moves with the project to `completed/` for future reference. The `.prompt-log-enabled` marker is automatically removed to disable logging.
 
 </close_out_protocol>
 
