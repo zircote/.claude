@@ -33,6 +33,14 @@ When working in these environments, read and follow the corresponding file:
 
 ## Custom Commands
 
+### Git Workflow (`/git`)
+
+| Command | Description |
+|---------|-------------|
+| `/git:cm` | Stage all files and create a commit (conventional commits, splits new vs modified) |
+| `/git:cp` | Stage, commit, and push all changes |
+| `/git:pr [to-branch]` | Create a pull request using `gh` CLI |
+
 ### Architecture Planning (`/arch`)
 
 | Command | Description |
@@ -56,6 +64,12 @@ Workflow: `/arch:p` to plan → `/arch:s` to monitor → `/arch:c` to complete
 
 Trigger phrases: "create worktree", "spin up worktrees", "worktree status", "cleanup worktrees"
 
+**Initial prompt support**: Add `with prompt "template"` to auto-execute tasks in each worktree:
+```
+spin up worktrees for auth, payments with prompt "run tests for {{service}}"
+```
+Template variables: `{{service}}`, `{{branch}}`, `{{project}}`, `{{port}}`, `{{ports}}`
+
 **DO NOT** use raw `git worktree` commands directly or create ad-hoc worktree workflows.
 
 ## Plugin Maintenance
@@ -66,6 +80,17 @@ cp -r ~/.claude/patches/<plugin>-<version>/* ~/.claude/plugins/cache/claude-code
 ```
 
 For detailed repository structure, see `~/.claude/llms.txt`.
+
+## Skills Quick Reference
+
+Skills are in `~/.claude/skills/`. Key categories:
+- **Documents**: `pdf`, `docx`, `xlsx`, `pptx`
+- **Media**: `ai-multimodal`, `media-processing`, `chrome-devtools`
+- **Development**: `frontend-development`, `backend-development`, `databases`, `devops`
+- **AI/Prompting**: `anthropic-prompt-engineer`, `anthropic-architect`
+- **Utilities**: `docs-seeker`, `changelog-generator`, `mcp-builder`
+
+Invoke via Skill tool or trigger phrases defined in each skill's `SKILL.md`.
 
 ## Opus 4.5 Quick Reference
 
