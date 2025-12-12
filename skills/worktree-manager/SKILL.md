@@ -595,7 +595,7 @@ Launch Claude Code agents with a prompt that's ready when the instance starts. C
 
 | Mode | Flag | Behavior |
 |------|------|----------|
-| **Interactive** (default) | `--prompt "..."` | Pre-fills prompt, user can edit and confirm |
+| **Interactive** (default) | `--prompt "..."` | Shows prompt in terminal, user copies into Claude |
 | **Headless** | `--prompt "..." --headless` | Uses `-p` flag, auto-executes and exits |
 
 ### Syntax
@@ -633,7 +633,7 @@ spin up worktrees for auth, payments with prompt "/review-code" --headless
 1. User provides prompt template with optional `{{variable}}` placeholders
 2. `launch-agent.sh` substitutes variables with worktree-specific values
 3. Claude Code launches with prompt:
-   - **Interactive**: Prompt passed as argument (pre-fills input)
+   - **Interactive**: Prompt shown in terminal (user copies it)
    - **Headless**: Uses `-p` flag for auto-execution
 
 ### Batch Example
@@ -641,11 +641,11 @@ spin up worktrees for auth, payments with prompt "/review-code" --headless
 ```
 User: "spin up worktrees for auth, payments with prompt 'analyze {{service}}'"
 
-Result (interactive mode): 2 Claude instances with pre-filled prompts:
-  - auth worktree:     claude ... 'analyze auth'
-  - payments worktree: claude ... 'analyze payments'
+Result (interactive mode): 2 Claude instances with suggested prompts shown:
+  - auth worktree:     Terminal shows "Suggested prompt: analyze auth"
+  - payments worktree: Terminal shows "Suggested prompt: analyze payments"
 
-With --headless: Uses -p flag instead, auto-executes immediately
+With --headless: Uses -p flag, auto-executes immediately (claude -p 'analyze auth')
 ```
 
 ### Valid Prompt Types
@@ -704,7 +704,7 @@ Scripts are in `~/.claude/skills/worktree-manager/scripts/`
 # Opens new terminal window (uses config.json terminal setting) with Claude Code
 #
 # Prompt Modes:
-#   --prompt "template"            Interactive (default): pre-fills prompt, user confirms
+#   --prompt "template"            Interactive (default): shows prompt in terminal
 #   --prompt "template" --headless Headless: uses -p flag, auto-executes and exits
 #
 # Template Variables:

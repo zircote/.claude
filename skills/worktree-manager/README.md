@@ -86,8 +86,8 @@ Launch Claude Code agents with a prompt that's ready to go when the instance sta
 
 | Mode | Syntax | Behavior |
 |------|--------|----------|
-| **Interactive** (default) | `with prompt "..."` | Prompt is pre-filled, you can edit and press Enter |
-| **Headless** | `with prompt "..." --headless` | Auto-executes immediately, runs and exits |
+| **Interactive** (default) | `with prompt "..."` | Shows prompt in terminal, you copy/paste into Claude |
+| **Headless** | `with prompt "..." --headless` | Auto-executes immediately with `-p` flag |
 
 ### Basic Syntax
 
@@ -147,14 +147,14 @@ spin up worktrees for auth, billing with prompt "refactor {{service}} to use the
 
 1. You provide a prompt template with optional `{{variable}}` placeholders
 2. For each worktree, variables are replaced with that worktree's values
-3. Claude Code launches with your prompt:
-   - **Interactive** (default): Prompt is passed as argument, pre-fills the input field
+3. Claude Code launches:
+   - **Interactive** (default): Shows "Suggested prompt: ..." in terminal for you to copy
    - **Headless** (`--headless`): Uses `-p` flag, auto-executes immediately
 
 ### Tips
 
 - **Any valid prompt works**: Natural language, slash commands, multi-line instructions
-- **Combine with tasks**: The task description (shown in terminal) provides context; the prompt auto-executes
+- **Combine with tasks**: Task description provides context; add `--headless` if you want auto-execution
 - **Escape quotes carefully**: Use single quotes inside double-quoted prompts or vice versa
 - **Long prompts**: For complex instructions, consider creating a slash command and referencing it
 
@@ -180,10 +180,10 @@ You can also use the launch script directly:
 
 | Issue | Solution |
 |-------|----------|
-| Prompt not pre-filling | Ensure `claudeCommand` in config.json doesn't already include `-p` |
+| Prompt not showing in terminal | Ensure you're using `--prompt "..."` syntax |
 | Variables not substituting | Check spelling: `{{service}}` not `{service}` or `{{ service }}` |
 | Quotes breaking command | Escape inner quotes or use alternate quote style |
-| Claude exits immediately | Expected with `--headless`; use interactive mode (default) to stay open |
+| Claude exits immediately | Expected with `--headless`; omit it for interactive mode |
 
 ## Requirements
 
