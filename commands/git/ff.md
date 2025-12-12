@@ -1,5 +1,5 @@
 ---
-description: Fast-forward merge only - update branch without rebase or merge commits.
+description: Fast-forward merge only - update branch without rebase or merge commits
 argument-hint: "[remote] [branch]"
 ---
 

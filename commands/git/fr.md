@@ -1,5 +1,5 @@
 ---
-description: Fetch from remote and rebase current branch onto the remote branch.
+description: Fetch from remote and rebase current branch onto the remote branch
 argument-hint: "[remote] [branch]"
 ---
 

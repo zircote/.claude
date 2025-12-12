@@ -1,5 +1,5 @@
 ---
-description: Clean up local branches whose remote tracking branch is gone. Dry-run by default.
+description: Clean up local branches whose remote tracking branch is gone. Dry-run by default
 argument-hint: "[--force]"
 ---
 
