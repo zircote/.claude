@@ -114,3 +114,4 @@ __pycache__/
 # Snyk Security Extension - AI Rules (auto-generated)
 .windsurf/rules/snyk_rules.md
 PROMPT_LOG.json
+.prompt-log-enabled
