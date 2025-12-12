@@ -2,10 +2,10 @@
 project_id: ARCH-2025-12-12-001
 project_name: "Git Workflow Commands Suite"
 slug: git-fr-command
-status: in-review
+status: in-progress
 created: 2025-12-12T00:00:00Z
-approved: null
-started: null
+approved: 2025-12-12T21:30:00Z
+started: 2025-12-12T21:30:00Z
 completed: null
 expires: 2026-03-12T00:00:00Z
 superseded_by: null
