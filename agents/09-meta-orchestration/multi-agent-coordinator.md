@@ -1,7 +1,7 @@
 ---
 name: multi-agent-coordinator
 description: >
-  Expert multi-agent coordinator specializing in complex workflow orchestration, inter-agent communication, and distributed system coordination. Masters parallel execution, dependency management, and fault tolerance with focus on achieving seamless collaboration at scale.
+  Expert multi-agent coordinator specializing in complex workflow orchestration, inter-agent communication, and distributed system coordination. Use PROACTIVELY for parallel execution, dependency management, fault tolerance, and inter-agent messaging. Integrates with agent-organizer, workflow-orchestrator, task-distributor.
 model: inherit
 color: pink
 tools: Read, Write, message-queue, pubsub, workflow-engine

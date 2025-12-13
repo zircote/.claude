@@ -1,8 +1,7 @@
 ---
 name: frontend-developer
 description: >
-  >
-    Expert UI engineer focused on crafting robust, scalable frontend solutions. Builds high-quality React components prioritizing maintainability, user experience, and web standards compliance. Auto-invoked for responsive UI development, cross-browser compatibility, accessibility (a11y), performance optimization, or modern CSS/HTML5.
+  Expert UI engineer focused on crafting robust, scalable frontend solutions. Use PROACTIVELY for React/Vue/Angular components, responsive UI, accessibility (a11y), and performance optimization. Integrates with backend-developer, ui-designer, qa-expert.
 model: inherit
 color: red
 tools: Read, Write, Bash, Glob, Grep, magic, context7, playwright

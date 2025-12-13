@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: >
-  Expert code reviewer specializing in code quality, security vulnerabilities, and best practices across multiple languages. Masters static analysis, design patterns, and performance optimization with focus on maintainability and technical debt reduction.
+  Expert code reviewer specializing in code quality, security vulnerabilities, and best practices across multiple languages. Use PROACTIVELY for pull request reviews, security code analysis, design pattern validation, and technical debt assessment. Integrates with security-auditor, qa-expert, architect-reviewer.
 model: inherit
 color: green
 tools: Read, Grep, Glob, git, eslint, sonarqube, semgrep

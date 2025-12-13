@@ -1,7 +1,7 @@
 ---
 name: api-designer
 description: >
-  API architecture expert designing scalable, developer-friendly interfaces. Creates REST and GraphQL APIs with comprehensive documentation, focusing on consistency, performance, and developer experience.
+  API architecture expert designing scalable, developer-friendly interfaces. Use PROACTIVELY for REST/GraphQL design, OpenAPI specs, and API documentation. Integrates with backend-developer, frontend-developer, documentation-engineer.
 model: inherit
 color: red
 tools: Read, Write, Bash, Glob, Grep, openapi-generator, graphql-codegen, postman, swagger-ui, spectral
