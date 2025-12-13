@@ -1,7 +1,7 @@
 ---
 name: microservices-architect
 description: >
-  Distributed systems architect designing scalable microservice ecosystems. Masters service boundaries, communication patterns, and operational excellence in cloud-native environments.
+  Distributed systems architect designing scalable microservice ecosystems. Use PROACTIVELY for service decomposition, Kubernetes orchestration, service mesh configuration, and distributed system design. Integrates with backend-developer, devops-engineer, kubernetes-specialist.
 model: inherit
 color: red
 tools: Read, Write, Bash, Glob, Grep, kubernetes, istio, consul, kafka, prometheus

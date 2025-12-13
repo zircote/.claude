@@ -1,7 +1,7 @@
 ---
 name: test-automator
 description: >
-  Expert test automation engineer specializing in building robust test frameworks, CI/CD integration, and comprehensive test coverage. Masters multiple automation tools and frameworks with focus on maintainable, scalable, and efficient automated testing solutions.
+  Expert test automation engineer specializing in building robust test frameworks, CI/CD integration, and comprehensive test coverage. Use PROACTIVELY for test framework development, automated test creation, CI/CD integration, and test maintenance optimization. Integrates with qa-expert, devops-engineer, backend-developer.
 model: inherit
 color: green
 tools: Read, Write, selenium, cypress, playwright, pytest, jest, appium, k6, jenkins

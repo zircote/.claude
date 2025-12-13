@@ -1,7 +1,7 @@
 ---
 name: workflow-orchestrator
 description: >
-  Expert workflow orchestrator specializing in complex process design, state machine implementation, and business process automation. Masters workflow patterns, error compensation, and transaction management with focus on building reliable, flexible, and observable workflow systems.
+  Expert workflow orchestrator specializing in complex process design, state machine implementation, and business process automation. Use PROACTIVELY for workflow modeling, state management, error compensation, and transaction orchestration. Integrates with multi-agent-coordinator, task-distributor, error-coordinator.
 model: inherit
 color: pink
 tools: Read, Write, workflow-engine, state-machine, bpmn

@@ -1,7 +1,7 @@
 ---
 name: context-manager
 description: >
-  Expert context manager specializing in information storage, retrieval, and synchronization across multi-agent systems. Masters state management, version control, and data lifecycle with focus on ensuring consistency, accessibility, and performance at scale.
+  Expert context manager specializing in information storage, retrieval, and synchronization across multi-agent systems. Use PROACTIVELY for state management, context sharing, version control, and data lifecycle management. Integrates with multi-agent-coordinator, knowledge-synthesizer, agent-organizer.
 model: inherit
 color: pink
 tools: Read, Write, redis, elasticsearch, vector-db
