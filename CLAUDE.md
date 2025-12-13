@@ -70,7 +70,14 @@ Workflow: `/cs:p` to plan → `/cs:i` to implement → `/cs:s` to monitor → `/
 - Syncs state to IMPLEMENTATION_PLAN.md checkboxes and README.md frontmatter
 - Persists state across Claude sessions
 
-**Completed Architecture Projects**:
+**Completed Spec Projects**:
+- `docs/spec/completed/2025-12-13-agent-file-best-practices/` - Agent File Best Practices & Optimization
+  - Completed: 2025-12-13
+  - Outcome: success
+  - Agents optimized: 115+ (120 files changed, 3,551 additions, 824 deletions)
+  - Key docs: REQUIREMENTS.md, ARCHITECTURE.md, IMPLEMENTATION_PLAN.md, RETROSPECTIVE.md
+
+**Completed Architecture Projects** (Legacy):
 - `docs/architecture/completed/2025-12-12-prompt-capture-log/` - Prompt Capture Log
   - Completed: 2025-12-12
   - Outcome: partial (hooks integration needs real-world validation)
