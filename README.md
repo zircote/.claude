@@ -76,9 +76,11 @@ Custom slash commands for common workflows:
 | `/git:cm` | Stage all files and create a commit |
 | `/git:cp` | Stage, commit, and push all changes |
 | `/git:pr` | Create a pull request |
-| `/arch:p` | Strategic project planner with Socratic requirements elicitation |
-| `/arch:s` | Project status and portfolio manager |
-| `/arch:c` | Project close-out and archival |
+| `/cs:p` | Strategic project planner with Socratic requirements elicitation |
+| `/cs:s` | Project status and portfolio manager |
+| `/cs:c` | Project close-out and archival |
+| `/cr` | Comprehensive code review with parallel specialist agents |
+| `/cr-fx` | Interactive remediation of code review findings |
 | `/explore` | Exhaustive codebase exploration (Opus 4.5) |
 | `/deep-research` | Multi-phase research protocol (Opus 4.5) |
 
