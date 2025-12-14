@@ -98,6 +98,84 @@ Workflow: `/cs:p` to plan → `/cs:i` to implement → `/cs:s` to monitor → `/
 | `/explore <path\|pattern\|question>` | Exhaustive codebase exploration with parallel subagents and anti-hallucination enforcement |
 | `/deep-research <topic\|url>` | Multi-phase research protocol with structured deliverables and quality gates |
 
+### Code Review Workflow (`/cr` + `/cr-fx`)
+
+**Comprehensive code review and remediation system using parallel specialist agents.**
+
+| Command | Description |
+|---------|-------------|
+| `/cr [path\|--focus=security\|performance\|maintainability]` | Multi-dimensional code review with 6 parallel specialist agents |
+| `/cr-fx [CODE_REVIEW.md\|--quick\|--severity=critical\|--category=security]` | Interactive remediation of review findings with verification |
+
+**Workflow**: `/cr` to review → `/cr-fx` to remediate → verify
+
+#### `/cr` - Comprehensive Code Review
+
+**Benefits:**
+- **Parallel Analysis**: 6 specialist agents review simultaneously (Security, Performance, Architecture, Code Quality, Test Coverage, Documentation)
+- **Severity-Driven**: Findings prioritized as Critical/High/Medium/Low with action timelines
+- **Actionable Output**: Every finding includes file:line, impact description, and remediation code example
+- **No Speculation**: Agents READ every file—no guessing about unread code
+
+**Execution Phases:**
+1. **Discovery**: Map codebase structure, identify entry points, configuration, and tests
+2. **Parallel Review**: Deploy 6 specialist subagents with "very thorough" exploration
+3. **Synthesis**: Deduplicate, cross-reference, and prioritize findings
+4. **Report Generation**: Create CODE_REVIEW.md, REVIEW_SUMMARY.md, REMEDIATION_TASKS.md
+
+**Focus Modes:**
+- `--focus=security`: OWASP Top 10 checklist, dependency CVE scan, secrets scanning
+- `--focus=performance`: Benchmarking suggestions, database query analysis, caching strategy
+- `--focus=maintainability`: Refactoring opportunities, technical debt quantification, complexity metrics
+
+**Output Artifacts:**
+```
+CODE_REVIEW.md       # Full report with health scores (X/10 per dimension)
+REVIEW_SUMMARY.md    # Executive summary for quick review
+REMEDIATION_TASKS.md # Actionable checklist by priority
+```
+
+#### `/cr-fx` - Code Review Remediation
+
+**Benefits:**
+- **User Control**: AskUserQuestion at 5 decision points (severity, categories, conflicts, verification, commits)
+- **Quick Mode**: `--quick` flag for automated defaults (Critical+High, all categories, tests+linters)
+- **Specialist Routing**: Findings routed to appropriate subagent_type (security-engineer, performance-engineer, etc.)
+- **Verification**: pr-review-toolkit agents catch silent failures, over-engineering, and test gaps
+
+**Decision Points (Interactive Mode):**
+1. **Severity Filter**: Which severities to address (Critical/High/Medium/Low)
+2. **Category Selection**: Which finding types (Security/Performance/Architecture/Quality)
+3. **Conflict Resolution**: How to handle fixes targeting same files (Sequential/Combined/Manual)
+4. **Verification Depth**: Full (pr-review-toolkit) / Quick (tests+linters) / Tests only / Skip
+5. **Commit Strategy**: Review First / Single Commit / Separate Commits per category
+
+**Agent Mapping:**
+| Category | subagent_type | Focus |
+|----------|---------------|-------|
+| Security | `security-engineer` | Vulnerabilities, auth, secrets, OWASP |
+| Performance | `performance-engineer` | N+1 queries, caching, algorithms |
+| Architecture | `refactoring-specialist` | SOLID, patterns, complexity |
+| Code Quality | `code-reviewer` | Naming, DRY, dead code |
+| Tests | `test-automator` | Coverage, edge cases, fixtures |
+| Documentation | `documentation-engineer` | Docstrings, README, CHANGELOG |
+
+**Quick Mode Example:**
+```bash
+# Fast remediation with sensible defaults
+/cr-fx --quick
+
+# Quick mode with overrides
+/cr-fx --quick --severity=critical --category=security
+```
+
+**Verification Agents (pr-review-toolkit):**
+- `silent-failure-hunter`: Detect error swallowing and inadequate exception handling
+- `code-simplifier`: Identify over-engineered fixes, simplify where possible
+- `pr-test-analyzer`: Verify test coverage and quality for all fixes
+
+**Output:** REMEDIATION_REPORT.md with fix summary, agent deployment status, verification results
+
 ---
 
 ## Prompt Capture Hook
