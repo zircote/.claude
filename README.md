@@ -96,7 +96,10 @@ Project specification and implementation lifecycle management:
 | `/cs:log` | Toggle prompt capture logging |
 | `/cs:wt:create` | Create git worktree with Claude agent |
 
-Install: `claude mcp add claude-spec-marketplace -- npx -y github:zircote/claude-spec`
+Install via `/plugin` command or add marketplace to settings:
+```json
+{ "pluginMarketplaces": ["github:zircote/claude-spec"] }
+```
 
 ## Includes
 
