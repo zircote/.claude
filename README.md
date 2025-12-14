@@ -71,18 +71,32 @@ Skills are reusable capabilities that can be invoked during conversations. Notab
 
 Custom slash commands for common workflows:
 
+### Built-in Commands
+
 | Command | Description |
 |---------|-------------|
 | `/git:cm` | Stage all files and create a commit |
 | `/git:cp` | Stage, commit, and push all changes |
 | `/git:pr` | Create a pull request |
-| `/cs:p` | Strategic project planner with Socratic requirements elicitation |
-| `/cs:s` | Project status and portfolio manager |
-| `/cs:c` | Project close-out and archival |
 | `/cr` | Comprehensive code review with parallel specialist agents |
 | `/cr-fx` | Interactive remediation of code review findings |
 | `/explore` | Exhaustive codebase exploration (Opus 4.5) |
 | `/deep-research` | Multi-phase research protocol (Opus 4.5) |
+
+### Plugin: [zircote/claude-spec](https://github.com/zircote/claude-spec)
+
+Project specification and implementation lifecycle management:
+
+| Command | Description |
+|---------|-------------|
+| `/cs:p` | Strategic project planner with Socratic requirements elicitation |
+| `/cs:i` | Implementation progress tracker with PROGRESS.md checkpoints |
+| `/cs:s` | Project status and portfolio manager |
+| `/cs:c` | Project close-out and archival |
+| `/cs:log` | Toggle prompt capture logging |
+| `/cs:wt:create` | Create git worktree with Claude agent |
+
+Install: `claude mcp add claude-spec-marketplace -- npx -y github:zircote/claude-spec`
 
 ## Includes
 
